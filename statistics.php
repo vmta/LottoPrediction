@@ -43,17 +43,6 @@ if(isset($_GET['subcat'])) {
         $data .= processMinMaxAvg("6x", 50, "", "");
         $data .= processMinMaxAvg("5x", 50, "", "");
         $data .= processMinMaxAvg("4x", 50, "", "");
-        
-        /** TEST CODE
-        $data .= "<br /><br />";
-        $groupIndex = 1;
-        $group = new GroupOfNumbers($groupIndex);
-        $groupOfNumbers = $group->get();
-        for($index = 0; $index < count($groupOfNumbers); $index++) {
-            $data .= $index . ". " . $groupOfNumbers[$index][$groupIndex] . "<br />";
-        }
-        */
-        
     } elseif($_GET['subcat'] == "processMinMaxAvg") {
         include "statistics/displayMinMaxAvg.php";
         include "statistics/processMinMaxAvg.php";
@@ -71,7 +60,7 @@ if(isset($_GET['subcat'])) {
         $data .= "<h3>" . SUBCAT_STAT_MOVING_AVERAGE . "</h3>";
         $data .= displayMovingAverage();
         $data .= "<br />";
-        $data .= processMovingAverage($_POST['opt'], $_POST['draws'], $_POST['drawmachine'], $_POST['setofballs']);
+        $data .= processMovingAverage($_POST['opt'], $_POST['draws'], $_POST['drawmachine'], $_POST['setofballs'], $_POST['aggregator']);
     } elseif($_GET['subcat'] == "displaySeries") {
         include "statistics/displaySeries.php";
         $data .= "<h3>" . SUBCAT_STAT_SERIES . "</h3>";

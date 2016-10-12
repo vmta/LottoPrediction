@@ -1,5 +1,5 @@
 <?php
-function processMovingAverage($opt, $draws, $drawmachine, $setofballs) {
+function processMovingAverage($opt, $draws, $drawmachine, $setofballs, $aggregator) {
     
     $sqlOptions = "";
     switch($opt) {
@@ -37,48 +37,11 @@ function processMovingAverage($opt, $draws, $drawmachine, $setofballs) {
             $sqlOptions .= "";
     }
     
-    $str = "";
-    
-/**    $groupID = 1;
-    $groupPeriod = $draws;
-    $groupSMA = new Average($groupID, $sqlOptions, $groupPeriod);
-    $smaCounter = 0;
-    $smaArray = $groupSMA->getSMA();
-    foreach($smaArray as $sma) {
-        $str .= "<br />" . ++$smaCounter . "group 1, 5-draw sma: " . $sma . "<br />";
-    }
-    $chart = new Chart();
-    $str .= $chart->draw($smaArray);
-*/
-    
-    // Cycle through all groups (1 to 6)
-    // Initialize serie of numbers within the Group
-    // as well as serie of averages within the Group
-//    $groups = array();
-//    for($groupID = 1; $groupID < LOTTERY_BALLS_NUMBER + 1; $groupID++) {
-//        
-//        $group = array();
-//        
-//        $groupNumbers = new GroupOfNumbers($groupID, $sqlOptions, $draws);
-//        array_push($group, $groupNumbers);
-//        
-//        $groupAverages = new Average($groupID, $sqlOptions, $draws);
-//        array_push($group, $groupAverages);
-//        
-//        array_push($groups, $group);
-//    }
-    
-    // Cycle through groups array and pass subarrays
-    // to a chart processor.
-    $chart = new Chart();
-//    foreach($groups as $group) {
-//        $str .= $chart->gDrawWithTrendline($group[0]->get());
-//        $str .= $chart->gDrawWithTrendline($group[1]->get());
-//    }
-    
+    // Construct an SQL query
     $query = "SELECT ";
     for($i = 1; $i < LOTTERY_BALLS_NUMBER + 1; $i++) {
-        $query .= " `ball_" . $i . "` AS `" . $i ."`";
+//        $query .= " `ball_" . $i . "` AS `" . $i ."`";
+        $query .= " `ball_" . $i . "`";
         if($i < LOTTERY_BALLS_NUMBER) {
             $query .= ", ";
         }
@@ -86,9 +49,35 @@ function processMovingAverage($opt, $draws, $drawmachine, $setofballs) {
     $query .= " FROM `full` WHERE `id` > 917 "
             . $sqlOptions
             . " ORDER BY `id` DESC LIMIT " . $draws;
-    $numbersCombined = new LotteryNumbers($query);
-    //var_dump($groupsNumsOnly);
-    $str .= $chart->gDraw($numbersCombined->get());
+    
+    $str = "";
+    $chart = new Chart();
+    
+    // Get an Array of numbers from DB with constructed SQL query
+    $validData = new FullData($query);
+    
+    // Display combined graphic for all groups
+//    $str .= $chart->gDraw($validData->get());
+    
+    // Display numbers/SMA/WMA per group
+    $groupID = 1;
+    $group = $validData->getGroup($groupID);
+    $str .= $chart->gDrawGROUP($group, $groupID);
+    var_dump($group);
+    
+    print "<br /><br />";
+    
+    $sma = $validData->getGroupSMA($groupID, $aggregator);
+    $str .= $chart->gDrawSMA($sma, $groupID, $aggregator);
+    var_dump($sma);
+    
+    print "<br /><br />";
+    
+    $wma = $validData->getGroupWMA($groupID, $aggregator);
+    $str .= $chart->gDrawWMA($wma, $groupID, $aggregator);
+    var_dump($wma);
+
+    
     
     return $str;
 }

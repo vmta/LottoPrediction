@@ -38,10 +38,12 @@ class FullData {
          * data from DB, otherwise only VALID data
          * will be retrieved.
          */
-        if(!isset($dataSet) || empty($dataSet) || $dataSet != "ALL") {
+        if(!isset($dataSet) || empty($dataSet) || $dataSet === "VALID") {
             $query = "SELECT * FROM `full` WHERE `id` > 917 ORDER BY `id` DESC;";
-        } else {
+        } elseif($dataSet === "ALL") {
             $query = "SELECT * FROM `full` ORDER BY `id` DESC;";
+        } else {
+            $query = $dataSet;
         }
         
         /**
@@ -82,47 +84,47 @@ class FullData {
     /**
      * Provide access to an array of Group {1,2,3,4,5,6}
      * numbers.
-     * @param type $index
+     * @param type $groupID
      * @return array
      */
-    function getGroup($index) {
+    function getGroup($groupID) {
         $data = $this->get();
         $group = array();
         foreach($data as $row) {
-            array_push($group, $row["ball_".$index]);
+            array_push($group, $row["ball_".$groupID]);
         }
         return $group;
     }
     
     /**
      * Locate MINIMUM number value for the Group.
-     * @param type $index
+     * @param type $groupID
      * @return type
      */
-    function getGroupMIN($index) {
-        $group = $this->getGroup($index);
+    function getGroupMIN($groupID) {
+        $group = $this->getGroup($groupID);
         sort($group);
         return $group[0];
     }
     
     /**
      * Locate MAXIMUM number value for the Group.
-     * @param type $index
+     * @param type $groupID
      * @return type
      */
-    function getGroupMAX($index) {
-        $group = $this->getGroup($index);
+    function getGroupMAX($groupID) {
+        $group = $this->getGroup($groupID);
         rsort($group);
         return $group[0];
     }
     
     /**
      * Calculate AVERAGE number value for the Group.
-     * @param type $index
+     * @param type $groupID
      * @return type
      */
-    function getGroupAVG($index) {
-        $group = $this->getGroup($index);
+    function getGroupAVG($groupID) {
+        $group = $this->getGroup($groupID);
         $sum = 0;
         $counter = 0;
         foreach($group as $value) {
@@ -137,14 +139,14 @@ class FullData {
     }
     
     /**
-     * Calculate Simple Moving Average (SMA)
-     * for the Group.
-     * @param type $index
+     * Calculate Simple Moving Average (SMA) for the
+     * Group. (Define average for divided groups.)
+     * @param type $groupID
      * @param type $aggregator
      * @return array
      */
-    function getGroupSMA($index, $aggregator) {
-        $group = $this->getGroup($index);
+    function getGroupSMA($groupID, $aggregator) {
+        $group = $this->getGroup($groupID);
         $sma = array();
         $sum = 0;
         $counter = 1;
@@ -159,5 +161,35 @@ class FullData {
             $counter++;
         }
         return $sma;
+    }
+    
+    /**
+     * Calculate Weighted Moving Average (WMA) for the
+     * Group. (Define average for divided groups with
+     * applied weight.)
+     * @param type $groupID
+     * @param type $aggregator
+     * @return array
+     */
+    function getGroupWMA($groupID, $aggregator) {
+        $group = $this->getGroup($groupID);
+        $wma = array();
+        $sum = 0;
+        $counter = 1;
+        $factor = $aggregator;
+        $denominator = gmp_strval(gmp_fact($aggregator));
+        foreach($group as $value) {
+            if($counter % $aggregator != 0) {
+                $sum += $value * $factor;
+                $factor--;
+            } else {
+                $sum += $value * $factor;
+                array_push($wma, ($sum / $denominator));
+                $sum = 0;
+                $factor = $aggregator;
+            }
+            $counter++;
+        }
+        return $wma;
     }
 }

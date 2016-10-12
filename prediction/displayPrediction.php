@@ -10,7 +10,6 @@ function displayPrediction() {
         array_push($groups, $validData->getGroup($i));
     }
     
-    //var_dump($validData->getGroupMIN(1));
     /**
     print "MIN(1):".$validData->getGroupMIN(1)
             ."; MAX(1):".$validData->getGroupMAX(1)
@@ -23,21 +22,43 @@ function displayPrediction() {
         print "SMA(1, 5):".$value."<br />";
     }
     */
+    
+    // Initialize variables
     $str = "";
     $chart = new Chart();
     $groupIDs = [1, 2, 3, 4, 5, 6];
     $aggregators = [50, 25, 10];
     
+    // DISPLAY SMA
     $str .= "<table width=100%>";
     foreach($groupIDs as $groupID) {
         $str .= "<tr>";
         foreach($aggregators as $aggregator) {
             $sma = $validData->getGroupSMA($groupID, $aggregator);
-            $str .= "<td width=33%>" . $chart->gDrawSMA($sma, $groupID, $aggregator) . "</td>";
+            $wma = $validData->getGroupWMA($groupID, $aggregator);
+            $str .= "<td width=33%>"
+                    . $chart->gDrawSMA($sma, $groupID, $aggregator)
+                    . $chart->gDrawWMA($wma, $groupID, $aggregator)
+                    . "</td>";
         }
         $str .= "</tr>";
     }
     $str .= "</table>";
+    
+    // DISPLAY WMA
+/**    $str .= "<table width=100%>";
+    foreach($groupIDs as $groupID) {
+        $str .= "<tr>";
+        foreach($aggregators as $aggregator) {
+            $wma = $validData->getGroupWMA($groupID, $aggregator);
+            $str .= "<td width=33%>" . $chart->gDrawWMA($wma, $groupID, $aggregator) . "</td>";
+        }
+        $str .= "</tr>";
+    }
+    $str .= "</table>";
+*/    
+    
+    
     
     $str .= "<script>
         // Predefined variables

@@ -209,6 +209,82 @@ class Chart {
         return $str;
     }
     
+    public function gDrawGROUP($chartData, $groupID) {
+        
+        // Prepare rows to add to data
+        $preparedRows = "";
+        $countedRows = count($chartData);
+        $counter = 0;
+        foreach($chartData as $row) {
+            $preparedRows .= "[ " . $counter . ", " . $row . " ]";
+            if($counter < $countedRows - 1) {
+                $preparedRows .= ", ";
+            }
+            $counter++;
+        }
+        
+        $str .= "<script type=\"text/javascript\"
+                src=\"https://www.gstatic.com/charts/loader.js\"></script>
+                <div id=\"group" . $groupID . "\" style=\"width: 400; height: 300px;\"></div>
+                
+                <script>
+                google.charts.load('current', {packages: ['corechart', 'line']});
+                google.charts.setOnLoadCallback(drawAxisTickColors);
+
+                function drawAxisTickColors() {
+                      var data = new google.visualization.DataTable();
+                      data.addColumn('number', 'N');
+                      data.addColumn('number', 'Группа " . $groupID . "');
+                      data.addRows([" . $preparedRows . "]);
+
+                      var options = {
+                        hAxis: {
+                          title: 'Draws',
+                          textStyle: {
+                            color: '#01579b',
+                            fontSize: 10,
+                            fontName: 'Arial',
+                            bold: false,
+                            italic: false
+                          },
+                          titleTextStyle: {
+                            color: '#01579b',
+                            fontSize: 10,
+                            fontName: 'Arial',
+                            bold: false,
+                            italic: false
+                          }
+                        },
+                        vAxis: {
+                          title: 'Numbers',
+                          textStyle: {
+                            color: '#1a237e',
+                            fontSize: 12,
+                            bold: false
+                          },
+                          titleTextStyle: {
+                            color: '#1a237e',
+                            fontSize: 12,
+                            bold: false
+                          }
+                        },
+                        colors: ['#cc9966'],
+                        curveType: 'function',
+                        legend: { position: 'bottom' },
+                        title: 'Выпавшие в группе номера',
+                        trendlines: {
+                          0: {type: 'exponential', color: '#333', opacity: 1},
+                          1: {type: 'linear', color: '#111', opacity: .3}
+                        }
+                      };
+                      var chart = new google.visualization.LineChart(document.getElementById('group" . $groupID . "'));
+                      chart.draw(data, options);
+                    }
+                </script>
+                ";
+        return $str;
+    }
+    
     public function gDrawSMA($chartData, $groupID, $aggregator) {
         
         // Prepare rows to add to data
@@ -225,7 +301,7 @@ class Chart {
         
         $str .= "<script type=\"text/javascript\"
                 src=\"https://www.gstatic.com/charts/loader.js\"></script>
-                <div id=\"chart_div" . $groupID . $aggregator . "\" style=\"width: 400; height: 300px;\"></div>
+                <div id=\"sma" . $groupID . $aggregator . "\" style=\"width: 400; height: 300px;\"></div>
                 
                 <script>
                 google.charts.load('current', {packages: ['corechart', 'line']});
@@ -273,7 +349,79 @@ class Chart {
                         legend: { position: 'bottom' },
                         title: 'SMA (" . $aggregator . " draws)'
                       };
-                      var chart = new google.visualization.LineChart(document.getElementById('chart_div" . $groupID . $aggregator . "'));
+                      var chart = new google.visualization.LineChart(document.getElementById('sma" . $groupID . $aggregator . "'));
+                      chart.draw(data, options);
+                    }
+                </script>
+                ";
+        return $str;
+    }
+    
+    public function gDrawWMA($chartData, $groupID, $aggregator) {
+        
+        // Prepare rows to add to data
+        $preparedRows = "";
+        $countedRows = count($chartData);
+        $counter = 0;
+        foreach($chartData as $row) {
+            $preparedRows .= "[ " . $counter . ", " . $row . " ]";
+            if($counter < $countedRows - 1) {
+                $preparedRows .= ", ";
+            }
+            $counter++;
+        }
+        
+        $str .= "<script type=\"text/javascript\"
+                src=\"https://www.gstatic.com/charts/loader.js\"></script>
+                <div id=\"wma" . $groupID . $aggregator . "\" style=\"width: 400; height: 300px;\"></div>
+                
+                <script>
+                google.charts.load('current', {packages: ['corechart', 'line']});
+                google.charts.setOnLoadCallback(drawAxisTickColors);
+
+                function drawAxisTickColors() {
+                      var data = new google.visualization.DataTable();
+                      data.addColumn('number', 'N');
+                      data.addColumn('number', 'Группа " . $groupID . "');
+                      data.addRows([" . $preparedRows . "]);
+
+                      var options = {
+                        hAxis: {
+                          title: 'Draws',
+                          textStyle: {
+                            color: '#01579b',
+                            fontSize: 10,
+                            fontName: 'Arial',
+                            bold: false,
+                            italic: false
+                          },
+                          titleTextStyle: {
+                            color: '#01579b',
+                            fontSize: 10,
+                            fontName: 'Arial',
+                            bold: false,
+                            italic: false
+                          }
+                        },
+                        vAxis: {
+                          title: 'Numbers',
+                          textStyle: {
+                            color: '#1a237e',
+                            fontSize: 12,
+                            bold: false
+                          },
+                          titleTextStyle: {
+                            color: '#1a237e',
+                            fontSize: 12,
+                            bold: false
+                          }
+                        },
+                        colors: ['#cc9966'],
+                        curveType: 'function',
+                        legend: { position: 'bottom' },
+                        title: 'WMA (" . $aggregator . " draws)'
+                      };
+                      var chart = new google.visualization.LineChart(document.getElementById('wma" . $groupID . $aggregator . "'));
                       chart.draw(data, options);
                     }
                 </script>

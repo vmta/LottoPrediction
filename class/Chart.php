@@ -34,10 +34,38 @@ class Chart {
     }
     public function redraw() {}
     
-    public function gDraw() {
+    public function gDraw($chartData) {
+        
+        // Prepare rows to add to data
+        $preparedRows = "";
+        $countedRows = count($chartData);
+        $counter = 0;
+        
+        foreach($chartData as $row) {
+            $preparedRows .= "[ "
+                            . $counter
+                            . ", "
+                            . $row[1]
+                            . ", "
+                            . $row[2]
+                            . ", "
+                            . $row[3]
+                            . ", "
+                            . $row[4]
+                            . ", "
+                            . $row[5]
+                            . ", "
+                            . $row[6]
+                            . " ]";
+            if($counter < $countedRows - 1) {
+                $preparedRows .= ", ";
+            }
+            $counter++;
+        }
+        
         $str .= "<script type=\"text/javascript\"
                 src=\"https://www.gstatic.com/charts/loader.js\"></script>
-                <div id=\"chart_div\"></div>
+                <div id=\"chart_div\" style=\"width: 800; height: 600px;\"></div>
                 
                 <script>
                 google.charts.load('current', {packages: ['corechart', 'line']});
@@ -45,13 +73,15 @@ class Chart {
 
                 function drawAxisTickColors() {
                       var data = new google.visualization.DataTable();
-                      data.addColumn('number', 'X');
-                      data.addColumn('number', 'Dogs');
-                      data.addColumn('number', 'Cats');
+                      data.addColumn('number', 'N');
+                      data.addColumn('number', 'G1');
+                      data.addColumn('number', 'G2');
+                      data.addColumn('number', 'G3');
+                      data.addColumn('number', 'G4');
+                      data.addColumn('number', 'G5');
+                      data.addColumn('number', 'G6');
 
-                      data.addRows([
-                        [0, 0, 0],    [1, 10, 5],   [2, 23, 15],  [3, 17, 9]
-                      ]);
+                      data.addRows([" . $preparedRows . "]);
 
                       var options = {
                         hAxis: {
@@ -84,7 +114,10 @@ class Chart {
                             bold: false
                           }
                         },
-                        colors: ['#a52714', '#097138'],
+                        colors: ['#aaee99', '#aaaaee', '#66ccee', '#66aacc', '#9966ee', '#ee66cc'],
+                        curveType: 'function',
+                        legend: { position: 'bottom' },
+                        title: 'Серии номеров'
                       };
                       var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
                       chart.draw(data, options);
@@ -98,14 +131,15 @@ class Chart {
         
         // Get a groupID which is an innerKey
         // of a 2-dimensional array.
-        $groupID = array_shift(array_keys($chartData[0]));
+    //    $groupID = array_shift(array_keys($chartData[0]));
         
         // Prepare rows to add to data
         $preparedRows = "";
         $countedRows = count($chartData);
         $counter = 0;
         foreach($chartData as $row) {
-            $preparedRows .= "[ " . $counter . ", " . $row[$groupID] . " ]";
+        //    $preparedRows .= "[ " . $counter . ", " . $row[$groupID] . " ]";
+            $preparedRows .= "[ " . $counter . ", " . $row . " ]";
             if($counter < $countedRows - 1) {
                 $preparedRows .= ", ";
             }
@@ -114,7 +148,8 @@ class Chart {
         
         $str .= "<script type=\"text/javascript\"
                 src=\"https://www.gstatic.com/charts/loader.js\"></script>
-                <div id=\"chart_div" . $groupID . "\"></div>
+            /*    <div id=\"chart_div" . $groupID . "\"></div> */
+                <div id=\"chart_div\" style=\"width: 800; height: 600px;\"></div>
                 
                 <script>
                 google.charts.load('current', {packages: ['corechart', 'line']});
@@ -123,7 +158,8 @@ class Chart {
                 function drawAxisTickColors() {
                       var data = new google.visualization.DataTable();
                       data.addColumn('number', 'N');
-                      data.addColumn('number', 'Группа " . $groupID . "');
+                //      data.addColumn('number', 'Группа " . $groupID . "');
+                      data.addColumn('number', 'Группа');
 
                       data.addRows([" . $preparedRows . "]);
 
@@ -164,7 +200,80 @@ class Chart {
                           1: {type: 'linear', color: '#111', opacity: .3}
                         }
                       };
-                      var chart = new google.visualization.LineChart(document.getElementById('chart_div" . $groupID . "'));
+                    //  var chart = new google.visualization.LineChart(document.getElementById('chart_div" . $groupID . "'));
+                      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+                      chart.draw(data, options);
+                    }
+                </script>
+                ";
+        return $str;
+    }
+    
+    public function gDrawSMA($chartData, $groupID, $aggregator) {
+        
+        // Prepare rows to add to data
+        $preparedRows = "";
+        $countedRows = count($chartData);
+        $counter = 0;
+        foreach($chartData as $row) {
+            $preparedRows .= "[ " . $counter . ", " . $row . " ]";
+            if($counter < $countedRows - 1) {
+                $preparedRows .= ", ";
+            }
+            $counter++;
+        }
+        
+        $str .= "<script type=\"text/javascript\"
+                src=\"https://www.gstatic.com/charts/loader.js\"></script>
+                <div id=\"chart_div" . $groupID . $aggregator . "\" style=\"width: 400; height: 300px;\"></div>
+                
+                <script>
+                google.charts.load('current', {packages: ['corechart', 'line']});
+                google.charts.setOnLoadCallback(drawAxisTickColors);
+
+                function drawAxisTickColors() {
+                      var data = new google.visualization.DataTable();
+                      data.addColumn('number', 'N');
+                      data.addColumn('number', 'Группа " . $groupID . "');
+                      data.addRows([" . $preparedRows . "]);
+
+                      var options = {
+                        hAxis: {
+                          title: 'Draws',
+                          textStyle: {
+                            color: '#01579b',
+                            fontSize: 10,
+                            fontName: 'Arial',
+                            bold: false,
+                            italic: false
+                          },
+                          titleTextStyle: {
+                            color: '#01579b',
+                            fontSize: 10,
+                            fontName: 'Arial',
+                            bold: false,
+                            italic: false
+                          }
+                        },
+                        vAxis: {
+                          title: 'Numbers',
+                          textStyle: {
+                            color: '#1a237e',
+                            fontSize: 12,
+                            bold: false
+                          },
+                          titleTextStyle: {
+                            color: '#1a237e',
+                            fontSize: 12,
+                            bold: false
+                          }
+                        },
+                        colors: ['#6699cc'],
+                        curveType: 'function',
+                        legend: { position: 'bottom' },
+                        title: 'SMA (" . $aggregator . " draws)'
+                      };
+                      var chart = new google.visualization.LineChart(document.getElementById('chart_div" . $groupID . $aggregator . "'));
                       chart.draw(data, options);
                     }
                 </script>

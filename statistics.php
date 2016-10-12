@@ -70,6 +70,7 @@ if(isset($_GET['subcat'])) {
         include "statistics/processMovingAverage.php";
         $data .= "<h3>" . SUBCAT_STAT_MOVING_AVERAGE . "</h3>";
         $data .= displayMovingAverage();
+        $data .= "<br />";
         $data .= processMovingAverage($_POST['opt'], $_POST['draws'], $_POST['drawmachine'], $_POST['setofballs']);
     } elseif($_GET['subcat'] == "displaySeries") {
         include "statistics/displaySeries.php";

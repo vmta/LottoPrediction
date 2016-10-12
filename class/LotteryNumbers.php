@@ -34,8 +34,9 @@ class LotteryNumbers {
         // 917 is a "magic" number for the
         // DataBase as earlier data is outdated
         // (as of 2016-10-06).
-        if(empty($query))
+        if(!isset($query) || empty($query)) {
             $query = "SELECT * FROM `full` WHERE `id` > 917 ORDER BY `id` DESC;";
+        }
         
         // Query the DataBase. On success
         // returns raw data, else dies with

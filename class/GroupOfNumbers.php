@@ -25,28 +25,34 @@ class GroupOfNumbers extends LotteryNumbers {
         return $this->groupID;
     }
     
-    public function __construct($groupID, $sqlOption) {
+    public function __construct($groupID, $sqlOptions, $draws) {
         
         // Check if parameter is not empty and
         // is within allowed range: 0 < $id < 7.
         if(empty($groupID) || $groupID < 1) {
             $groupID = 1;
-        }
-        elseif($groupID > 6) {
+        } elseif($groupID > 6) {
             $groupID = 6;
         }
         
         // Check if parameter was passed, if it
         // was not, then set an empty variable.
-        if(!isset($sqlOption)) {
-            $sqlOption = "";
+        if(!isset($sqlOptions) || empty($sqlOptions)) {
+            $sqlOptions = " ORDER BY `id` DESC ";
         }
+        
+        // Check if perameter was passed, if it
+        // was not, then to default of 50.
+        if(!isset($draws) || $draws < 1) {
+            $draws = 50;
+        }
+        $sqlOptions .= " LIMIT " . $draws;
         
         // Initialize local variable
         $this->setGroupID($groupID);
         
         // Prepare SQL query.
-        $query = "SELECT `ball_" . $groupID . "` AS `" . $groupID . "` FROM `full` WHERE `id` > 917 " . $sqlOption . " ORDER BY `id`;";
+        $query = "SELECT `ball_" . $groupID . "` AS `" . $groupID . "` FROM `full` WHERE `id` > 917 " . $sqlOptions;
         
         // Initialize object of parent class
         // passing SQL query as parameter.

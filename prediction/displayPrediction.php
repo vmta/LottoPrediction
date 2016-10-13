@@ -1,64 +1,39 @@
 <?php
 function displayPrediction() {
     
-    $fullData = new FullData("ALL");
     $validData = new FullData("VALID");
-    
-    $ids = $validData->getIDs();
-    $groups = array();
-    for($i = LOTTERY_MIN_NUMBER; $i < LOTTERY_BALLS_NUMBER + 1; $i++) {
-        array_push($groups, $validData->getGroup($i));
+    $validMIN = "";
+    $validAVG = "";
+    $validMAX = "";
+    for($groupID = LOTTERY_MIN_NUMBER; $groupID < LOTTERY_BALLS_NUMBER + 1; $groupID++) {
+        $validMIN .= $validData->getGroupMIN($groupID).";";
+        $validAVG .= $validData->getGroupAVG($groupID).";";
+        $validMAX .= $validData->getGroupMAX($groupID).";";
     }
     
-    /**
-    print "MIN(1):".$validData->getGroupMIN(1)
-            ."; MAX(1):".$validData->getGroupMAX(1)
-            ."; AVG(1):".$validData->getGroupAVG(1)
-            ."<br />";
-    */
-    /**
-    $sma = $validData->getGroupSMA(1, 5);
-    foreach($sma as $value) {
-        print "SMA(1, 5):".$value."<br />";
+    // Prepare least/most Frequent Numbers
+    $leastFrequentNumbers = $validData->getLeastFrequentNumbers(LOTTERY_BALLS_NUMBER);
+    $leastFrequentNUM = "";
+    foreach($leastFrequentNumbers as $num) {
+        $leastFrequentNUM .= $num.";";
     }
-    */
-    
-    // Initialize variables
-    $str = "";
-    $chart = new Chart();
-    $groupIDs = [1, 2, 3, 4, 5, 6];
-    $aggregators = [50, 25, 10];
-    
-    // DISPLAY SMA
-    $str .= "<table width=100%>";
-    foreach($groupIDs as $groupID) {
-        $str .= "<tr>";
-        foreach($aggregators as $aggregator) {
-            $sma = $validData->getGroupSMA($groupID, $aggregator);
-            $wma = $validData->getGroupWMA($groupID, $aggregator);
-            $str .= "<td width=33%>"
-                    . $chart->gDrawSMA($sma, $groupID, $aggregator)
-                    . $chart->gDrawWMA($wma, $groupID, $aggregator)
-                    . "</td>";
-        }
-        $str .= "</tr>";
+    $mostFrequentNumbers = $validData->getMostFrequentNumbers(LOTTERY_BALLS_NUMBER);
+    $mostFrequentNUM = "";
+    foreach($mostFrequentNumbers as $num) {
+        $mostFrequentNUM .= $num.";";
     }
-    $str .= "</table>";
     
-    // DISPLAY WMA
-/**    $str .= "<table width=100%>";
-    foreach($groupIDs as $groupID) {
-        $str .= "<tr>";
-        foreach($aggregators as $aggregator) {
-            $wma = $validData->getGroupWMA($groupID, $aggregator);
-            $str .= "<td width=33%>" . $chart->gDrawWMA($wma, $groupID, $aggregator) . "</td>";
-        }
-        $str .= "</tr>";
+    // Prepare least/most Latent Numbers
+    $leastLatentNumbers = $validData->getLeastLatentNumbers(LOTTERY_BALLS_NUMBER);
+    $leastLatentNUM = "";
+    foreach($leastLatentNumbers as $num) {
+        $leastLatentNUM .= $num.";";
     }
-    $str .= "</table>";
-*/    
-    
-    
+    $mostLatentNumbers = $validData->getMostLatentNumbers(LOTTERY_BALLS_NUMBER);
+    $mostLatentNUM = "";
+    foreach($mostLatentNumbers as $num) {
+        $mostLatentNUM .= $num.";";
+    }
     
     $str .= "<script>
         // Predefined variables
@@ -138,22 +113,85 @@ function displayPrediction() {
             
             var newHTML = '';
             for(var i = 0; i < predictedNumbers.length; i++) {
-                newHTML += predictedNumbers[i];
-                if(i < predictedNumbers.length - 1) {
-                    newHTML += ', ';
-                }
+                newHTML += predictedNumbers[i] + ';';
             }
             
             var prevHTML = document.getElementById('predictionNumbersDisplay').innerHTML;
             if(prevHTML != '') {
                 newHTML += '<br />' + prevHTML;
             }
-            
             document.getElementById('predictionNumbersDisplay').innerHTML = newHTML;
+        }
+        
+        function getMinNumbers() {
+            var newHTML = '".$validMIN." (мин)';
+            var prevHTML = document.getElementById('predictionNumbersDisplay').innerHTML;
+            if(prevHTML != '') {
+                newHTML += '<br />' + prevHTML;
+            }
+            document.getElementById('predictionNumbersDisplay').innerHTML = newHTML;
+        }
+        
+        function getAvgNumbers() {
+            var newHTML = '".$validAVG." (средние)';
+            var prevHTML = document.getElementById('predictionNumbersDisplay').innerHTML;
+            if(prevHTML != '') {
+                newHTML += '<br />' + prevHTML;
+            }
+            document.getElementById('predictionNumbersDisplay').innerHTML = newHTML;
+        }
+        
+        function getMaxNumbers() {
+            var newHTML = '".$validMAX." (макс)';
+            var prevHTML = document.getElementById('predictionNumbersDisplay').innerHTML;
+            if(prevHTML != '') {
+                newHTML += '<br />' + prevHTML;
+            }
+            document.getElementById('predictionNumbersDisplay').innerHTML = newHTML;
+        }
+         
+        function getLeastFrequentNumbers() {
+            var newHTML = '".$leastFrequentNUM." (редкие)';
+            var prevHTML = document.getElementById('predictionNumbersDisplay').innerHTML;
+            if(prevHTML != '') {
+                newHTML += '<br />' + prevHTML;
+            }
+            document.getElementById('predictionNumbersDisplay').innerHTML = newHTML;
+        }
+        
+        function getMostFrequentNumbers() {
+            var newHTML = '".$mostFrequentNUM." (частые)';
+            var prevHTML = document.getElementById('predictionNumbersDisplay').innerHTML;
+            if(prevHTML != '') {
+                newHTML += '<br />' + prevHTML;
+            }
+            document.getElementById('predictionNumbersDisplay').innerHTML = newHTML;
+        }
+        
+        function getLeastLatentNumbers() {
+            var newHTML = '".$leastLatentNUM." (менее латентные)';
+            var prevHTML = document.getElementById('predictionNumbersDisplay').innerHTML;
+            if(prevHTML != '') {
+                newHTML += '<br />' + prevHTML;
+            }
+            document.getElementById('predictionNumbersDisplay').innerHTML = newHTML;
+        }
+        
+        function getMostLatentNumbers() {
+            var newHTML = '".$mostLatentNUM." (наиболее латентные)';
+            var prevHTML = document.getElementById('predictionNumbersDisplay').innerHTML;
+            if(prevHTML != '') {
+                newHTML += '<br />' + prevHTML;
+            }
+            document.getElementById('predictionNumbersDisplay').innerHTML = newHTML;
+        }
+        
+        function clearNumbers() {
+            document.getElementById('predictionNumbersDisplay').innerHTML = '';
         }
         </script>";
     
-    $str .= "<p>ToDo:</p>
+    $str .= "<p>ToDo:<br />
         <ol>
             <li>При генерации комбинации учесть:</li>
             <ul>
@@ -167,12 +205,19 @@ function displayPrediction() {
                 <li>Коэффициенты корреляции (с учетом новых данных)</li>
                 <li>Отклонение от средних значений</li>
             </ul>
-        </ol>
+        </ol></p>
         
-        <span onclick='getRandomNumbers();' style='border:1px solid #aabbcc' onmouseover='this.style.border=\"1px solid #66ccdd\";this.style.backgroundColor=\"#66ccdd\"' onmouseout='this.style.border=\"1px solid #aabbcc\";this.style.backgroundColor=\"#ffffff\"'>Показать номера</span>
+        <p><span onclick='getRandomNumbers();' style='border:1px solid #aabbcc' onmouseover='this.style.border=\"1px solid #66ccdd\";this.style.backgroundColor=\"#66ccdd\"' onmouseout='this.style.border=\"1px solid #aabbcc\";this.style.backgroundColor=\"#ffffff\"'>Случайные номера</span><br />
+        <span onclick='getMinNumbers();' style='border:1px solid #aabbcc' onmouseover='this.style.border=\"1px solid #66ccdd\";this.style.backgroundColor=\"#66ccdd\"' onmouseout='this.style.border=\"1px solid #aabbcc\";this.style.backgroundColor=\"#ffffff\"'>Минимальные номера</span> | 
+        <span onclick='getAvgNumbers();' style='border:1px solid #aabbcc' onmouseover='this.style.border=\"1px solid #66ccdd\";this.style.backgroundColor=\"#66ccdd\"' onmouseout='this.style.border=\"1px solid #aabbcc\";this.style.backgroundColor=\"#ffffff\"'>Усредненные номера</span> | 
+        <span onclick='getMaxNumbers();' style='border:1px solid #aabbcc' onmouseover='this.style.border=\"1px solid #66ccdd\";this.style.backgroundColor=\"#66ccdd\"' onmouseout='this.style.border=\"1px solid #aabbcc\";this.style.backgroundColor=\"#ffffff\"'>Максимальные номера</span><br />
+        <span onclick='getLeastFrequentNumbers();' style='border:1px solid #aabbcc' onmouseover='this.style.border=\"1px solid #66ccdd\";this.style.backgroundColor=\"#66ccdd\"' onmouseout='this.style.border=\"1px solid #aabbcc\";this.style.backgroundColor=\"#ffffff\"'>Редко выпадающие номера</span> | 
+        <span onclick='getMostFrequentNumbers();' style='border:1px solid #aabbcc' onmouseover='this.style.border=\"1px solid #66ccdd\";this.style.backgroundColor=\"#66ccdd\"' onmouseout='this.style.border=\"1px solid #aabbcc\";this.style.backgroundColor=\"#ffffff\"'>Часто выпадающие номера</span><br />
+        <span onclick='getLeastLatentNumbers();' style='border:1px solid #aabbcc' onmouseover='this.style.border=\"1px solid #66ccdd\";this.style.backgroundColor=\"#66ccdd\"' onmouseout='this.style.border=\"1px solid #aabbcc\";this.style.backgroundColor=\"#ffffff\"'>Наименее латентные номера</span> | 
+        <span onclick='getMostLatentNumbers();' style='border:1px solid #aabbcc' onmouseover='this.style.border=\"1px solid #66ccdd\";this.style.backgroundColor=\"#66ccdd\"' onmouseout='this.style.border=\"1px solid #aabbcc\";this.style.backgroundColor=\"#ffffff\"'>Наиболеее латентные номера</span><br />
+        <span onclick='clearNumbers();' style='border:1px solid #aabbcc' onmouseover='this.style.border=\"1px solid #66ccdd\";this.style.backgroundColor=\"#66ccdd\"' onmouseout='this.style.border=\"1px solid #aabbcc\";this.style.backgroundColor=\"#ffffff\"'>Очистить</span>
         <br /><span id='predictionNumbersDisplay'></span>
-        <br /><span id='logDisplay'></span>
-        ";
+        <br /><span id='logDisplay'></span></p>";
     
     return $str;
 }

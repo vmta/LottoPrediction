@@ -13,8 +13,8 @@ class FullData {
     // Hold retrieved data as Array.
     private $dbData;
     
-    /** Provide access to retrieved data.
-     * 
+    /**
+     * Provide access to retrieved data.
      * @return Array $dbData
      */
     public function get() { return $this->dbData; }
@@ -23,8 +23,7 @@ class FullData {
      * Class constructor takes parameter in
      * the form of an SQL query and proceeds
      * with data retrieval.
-     * 
-     * @param string $query
+     * @param string $dataSet
      */
     public function __construct($dataSet) {
         
@@ -191,5 +190,148 @@ class FullData {
             $counter++;
         }
         return $wma;
+    }
+    
+    /**
+     * Merge all groups numbers into one flat Array.
+     * @return type
+     */
+    private function mergeNumbers() {
+        $bigData = array_merge(
+                $this->getGroup(1),
+                $this->getGroup(2),
+                $this->getGroup(3),
+                $this->getGroup(4),
+                $this->getGroup(5),
+                $this->getGroup(6));
+        return $bigData;
+    }
+    
+    /**
+     * Count appearances of each number in merged array.
+     * @return type
+     */
+    private function getNumbersFrequency() {
+        $bigData = $this->mergeNumbers();
+        return array_count_values($bigData);
+    }
+    
+    /**
+     * Get specified quantity of least frequently appearing numbers.
+     * @param type $quantity
+     * @return array
+     */
+    function getLeastFrequentNumbers($quantity) {
+        $counted = $this->getNumbersFrequency();
+        asort($counted, SORT_NUMERIC);
+        $leastValues = array();
+        $index = 0;
+        foreach($counted as $key=>$value) {
+            if($index < $quantity) {
+                array_push($leastValues, $key);
+                $index++;
+            } else {
+                break;
+            }
+        }
+        sort($leastValues);
+        return $leastValues;
+    }
+    
+    /**
+     * Get specified quantity of most frequently appearing numbers.
+     * @param type $quantity
+     * @return array
+     */
+    function getMostFrequentNumbers($quantity) {
+        $counted = $this->getNumbersFrequency();
+        arsort($counted, SORT_NUMERIC);
+        $mostValues = array();
+        $index = 0;
+        foreach($counted as $key=>$value) {
+            if($index < $quantity) {
+                array_push($mostValues, $key);
+                $index++;
+            } else {
+                break;
+            }
+        }
+        sort($mostValues);
+        return $mostValues;
+    }
+    
+    /**
+     * Define how many draws ago a number was last drawn.
+     * Loop through valid range of numbers (1 through 52)
+     *   Loop through each row in bigData
+     *     Loop through groups and lookup for a number
+     *       If number matches the one in bigData,
+     *       put difference of last draw ID and the ID
+     *       of this number in bigData into holding array.
+     *       As lookup for this particular number is over,
+     *       break out of two nested loops.
+     *   Continue with another number.
+     * 
+     * @return array
+     */
+    function getNumbersLatency() {
+        $bigData = $this->get();
+        $latestDrawID = array_shift($this->getIDs());
+        $latentNumbers = array_fill(1, 52, 0);
+        for($number = LOTTERY_MIN_NUMBER; $number < LOTTERY_MAX_NUMBER + 1; $number++) {
+            foreach($bigData as $row) {
+                for($groupID = LOTTERY_MIN_NUMBER; $groupID <LOTTERY_BALLS_NUMBER + 1; $groupID++) {
+                    if($number == $row["ball_".$groupID]) {
+                        $latentNumbers[$number] = $latestDrawID - $row["id"];
+                        break 2;
+                    }
+                }
+            }
+        }
+        return $latentNumbers;
+    }
+    
+    /**
+     * Get specified quantity of least latent numbers.
+     * @param type $quantity
+     * @return array
+     */
+    function getLeastLatentNumbers($quantity) {
+        $counted = $this->getNumbersLatency();
+        asort($counted, SORT_NUMERIC);
+        $leastLatentNumbers = array();
+        $index = 0;
+        foreach($counted as $key=>$value) {
+            if($index < $quantity) {
+                array_push($leastLatentNumbers, $key);
+                $index++;
+            } else {
+                break;
+            }
+        }
+        sort($leastLatentNumbers);
+        return $leastLatentNumbers;
+    }
+    
+    /**
+     * Get specified quantity of most latent numbers.
+     * @param type $quantity
+     * @return array
+     */
+    function getMostLatentNumbers($quantity) {
+        $counted = $this->getNumbersLatency();
+        arsort($counted, SORT_NUMERIC);
+        $mostLatentNumbers = array();
+        $index = 0;
+        foreach($counted as $key=>$value) {
+            if($index < $quantity) {
+                array_push($mostLatentNumbers, $key);
+                $index++;
+            } else {
+                break;
+            }
+        }
+        sort($mostLatentNumbers);
+        return $mostLatentNumbers;
     }
 }

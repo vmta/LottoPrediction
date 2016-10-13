@@ -63,20 +63,12 @@ function processMovingAverage($opt, $draws, $drawmachine, $setofballs, $aggregat
     $groupID = 1;
     $group = $validData->getGroup($groupID);
     $str .= $chart->gDrawGROUP($group, $groupID);
-    var_dump($group);
-    
-    print "<br /><br />";
     
     $sma = $validData->getGroupSMA($groupID, $aggregator);
     $str .= $chart->gDrawSMA($sma, $groupID, $aggregator);
-    var_dump($sma);
-    
-    print "<br /><br />";
     
     $wma = $validData->getGroupWMA($groupID, $aggregator);
     $str .= $chart->gDrawWMA($wma, $groupID, $aggregator);
-    var_dump($wma);
-
     
     
     return $str;

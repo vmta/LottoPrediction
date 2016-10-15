@@ -5,8 +5,8 @@
  * @author vmta
  */
 class Probability {
-    var $m = 1;
-    var $n = 1;
+    private $m = 1;
+    private $n = 1;
     
     function __construct($m, $n) {
         $this->m = $m;
@@ -34,7 +34,6 @@ class Probability {
         //$rightSide = 2*F()
     }
     
-    function calculateLaplaceIntegral() {}
-    
-    function calculateLaplaceDeviation() {}
+    //function calculateLaplaceIntegral() {}
+    //function calculateLaplaceDeviation() {}
 }

@@ -2,498 +2,224 @@
 /**
  * Description of Chart
  * 
+ * Define common options for all charts, such as correct ID, width, height,
+ * as well as external script download, where needed.
+ *
  * @author vmta
  */
 class Chart {
     
-    public function __construct() {}
+    /**
+     * Default container width
+     * @var type integer
+     */
+    private $defaultContainerWidth = 800;
     
-    public function draw($coords) {
-        $chartWidth = 400;
-        $chartWidthMultiplicator = round($chartWidth/count($coords));
-        $chartHeight = 200;
-        $chartHeightMultiplicator = round($chartHeight/count($coords));
-        $str = "<canvas style='border:1px solid black;' width='" . $chartWidth
-                . "' height='" . $chartHeight
-                . "' id='Canvas'></canvas>";
+    /**
+     * Default container height
+     * @var type integer
+     */
+    private $defaultContainerHeight = 500;
+    
+    /**
+     * Default container ID
+     * @var type string
+     */
+    private $defaultContainerID = "chart_div";
+    
+    /**
+     * Container width
+     * @var type integer
+     */
+    private $containerWidth;
+    public function setContainerWidth($containerWidth) {
+        $this->containerWidth = $containerWidth;
+    }
+    public function getContainerWidth() { return $this->containerWidth; }
+    
+    /**
+     * Container height
+     * @var type integer
+     */
+    private $containerHeight;
+    public function setContainerHeight($containerHeight) {
+        $this->containerHeight = $containerHeight;
+    }
+    public function getContainerHeight() { return $this->containerHeight; }
+    
+    /**
+     * Container ID
+     * @var type stirng
+     */
+    private $containerID;
+    public function setContainerID($containerID) {
+        $this->containerID = $containerID;
+    }
+    public function getContainerID() { return $this->containerID; }
+    
+    /**
+     * Container HMTL
+     * @var type string
+     */
+    private $container;
+    public function setContainer($container) { $this->container = $container; }
+    public function getContainer() { return $this->container; }
+    
+    /**
+     * An HTML line defining JavaScript to be preloaded in order to provide JS
+     * functionality and chart rendering.
+     * @var type string
+     */
+    private $preloadScript = "<script type=\"text/javascript\""
+            . "src=\"https://www.gstatic.com/charts/loader.js\"></script>";
+    public function getPreloadScript() {
+        if($this->isPreloaded()) {
+            return "";
+        }
+        return $this->preloadScript;
+    }
+    
+    /**
+     * Status of preloadable script. (In order to prevent multiple download of
+     * this script on the multichart page.)
+     * @var type boolean
+     */
+    private $preloadScriptLoaded = FALSE;
+    function isPreloaded() {
+        if($this->preloadScriptLoaded) {
+            return TRUE;
+        }
+        $this->preloadScriptLoaded = TRUE;
+        return FALSE;
+    }
+    
+    /**
+     * Initialize Object
+     * @param type $containerID
+     * @param type $containerWidth
+     * @param type $containerHeight
+     */
+    function __construct($containerID, $containerWidth, $containerHeight) {
+        
+        /**
+         * Initiralize containerID
+         */
+        if(!isset($containerID) || empty($containerID)) {
+            $containerID = $this->defaultContainerID;
+        }
+        $this->setContainerID($containerID);
+        
+        /**
+         * Initialize containerWidth
+         */
+        if(!isset($containerWidth) || empty($containerWidth)) {
+            $containerWidth = $this->defaultContainerWidth;
+        }
+        $this->setContainerWidth($containerWidth);
+        
+        /**
+         * Inititalize containerHeight
+         */
+        if(!isset($containerHeight) || empty($containerHeight)) {
+            $containerHeight = $this->defaultContainerHeight;
+        }
+        $this->setContainerHeight($containerHeight);
+        
+        /**
+         * Initialize container (DIV HTML w. ID, Width, Height)
+         */
+        $container = "<div id=\"".$this->getContainerID()."\""
+                . "style=\"width:".$this->getContainerWidth()."px;"
+                . "height:".$this->getContainerHeight()."px;\"></div>";
+        $this->setContainer($container);
+    }
+    
+    /**
+     * Prepare JavaScript chart variable data in a specific format.
+     * @param type $data
+     * @return string
+     */
+    function dataConstructor($data) {
+        $cols = ""; // Construct columns for the chart
+        $rows = ""; // Construct rows for the chart
+        $rIndx = 0;
+        foreach($data as $row) {
+            if($rIndx == 0) {
+                $cols .= "[";
+                $cIndx = 0;
+                foreach(array_keys($row) as $key) {
+                    $cols .= "'".$key."'";
+                    if($cIndx < count($row) - 1) {
+                        $cols .= ",";
+                    }
+                    $cIndx++;
+                }
+                $cols .= "]";
+            }
+            $rows .= "[";
+            $cIndx = 0;
+            foreach($row as $cell) {
+                $rows .= $cell;
+                if($cIndx < count($row) - 1) {
+                    $rows .= ",";
+                }
+                $cIndx++;
+            }
+            $rows .= "]";
+            if($rIndx < count($data) - 1) {
+                $rows .= ",";
+            }
+            $rIndx++;
+        }
+        return $cols.",".$rows;
+    }
+    
+    /**
+     * Prepare JavaScript chart variable options in a specific format.
+     * @param type $seriesType
+     * @return string
+     */
+    function optionsConstructor($seriesType) {
+        $str = "{
+                title : 'Draw Numbers',
+                vAxis: {title: 'Numbers'},
+                hAxis: {title: 'Draw ID'},
+                seriesType: '".$seriesType."',
+                curveType: 'function',
+                legend: { position: 'right' }
+                }";
+        return $str;
+    }
+    
+    //// HAVE TO WORK ON THIS FUNCTION IN ORDER
+    //// TO PROVIDE ACCESS TO MINICHART RENDERING
+    function drawMiniChart($opt, $coords){
+        $cID = $this->getContainerID();
+        $cWidth = $this->getContainerWidth();
+        $cHeight = $this->getContainerHeight();
+        $cK = $cHeight / 100;
+	$str = "<canvas
+                style='border:1px solid black;'
+                width='" . $cWidth . "'
+                height='" . $cHeight . "'
+                id='Canvas" . $cID . "'>
+                </canvas>";
 	$str .= "<script>";
-	$str .= "var canvas = document.getElementById('Canvas');";
+	$str .= "var canvas = document.getElementById('Canvas"
+                . $cID
+                . "');";
 	$str .= "var ctx = canvas.getContext('2d');";
-	$str .= "ctx.moveTo(0, 100);";
+	$str .= "ctx.moveTo(0, " . $cHeight . ");";
 	for($i = 0; $i < count($coords) - 1; $i++) {
 		$str .= "ctx.lineTo("
-                        . ($i * $chartWidthMultiplicator)
+                        . $i
                         . ", "
-                        . ($chartHeight - $coords[$i] * $chartHeightMultiplicator)
+                        . ($cHeight - round($coords[$i] * $cK))
                         . ");";
 	}
 	$str .= "ctx.stroke();";
 	$str .= "</script>";
 	
 	return $str;
-    }
-    public function redraw() {}
-    
-    public function gDraw($chartData) {
-        
-        // Prepare rows to add to data
-        $preparedRows = "";
-        $countedRows = count($chartData);
-        $counter = 0;
-        
-        foreach($chartData as $row) {
-            $preparedRows .= "[ "
-                            . $counter
-                            . ", "
-                            . $row[1]
-                            . ", "
-                            . $row[2]
-                            . ", "
-                            . $row[3]
-                            . ", "
-                            . $row[4]
-                            . ", "
-                            . $row[5]
-                            . ", "
-                            . $row[6]
-                            . " ]";
-            if($counter < $countedRows - 1) {
-                $preparedRows .= ", ";
-            }
-            $counter++;
-        }
-        
-        $str .= "<script type=\"text/javascript\"
-                src=\"https://www.gstatic.com/charts/loader.js\"></script>
-                <div id=\"chart_div\" style=\"width: 800; height: 600px;\"></div>
-                
-                <script>
-                google.charts.load('current', {packages: ['corechart', 'line']});
-                google.charts.setOnLoadCallback(drawAxisTickColors);
-
-                function drawAxisTickColors() {
-                      var data = new google.visualization.DataTable();
-                      data.addColumn('number', 'N');
-                      data.addColumn('number', 'G1');
-                      data.addColumn('number', 'G2');
-                      data.addColumn('number', 'G3');
-                      data.addColumn('number', 'G4');
-                      data.addColumn('number', 'G5');
-                      data.addColumn('number', 'G6');
-
-                      data.addRows([" . $preparedRows . "]);
-
-                      var options = {
-                        hAxis: {
-                          title: 'Time',
-                          textStyle: {
-                            color: '#01579b',
-                            fontSize: 10,
-                            fontName: 'Arial',
-                            bold: false,
-                            italic: false
-                          },
-                          titleTextStyle: {
-                            color: '#01579b',
-                            fontSize: 10,
-                            fontName: 'Arial',
-                            bold: false,
-                            italic: false
-                          }
-                        },
-                        vAxis: {
-                          title: 'Popularity',
-                          textStyle: {
-                            color: '#1a237e',
-                            fontSize: 12,
-                            bold: false
-                          },
-                          titleTextStyle: {
-                            color: '#1a237e',
-                            fontSize: 12,
-                            bold: false
-                          }
-                        },
-                        colors: ['#aaee99', '#aaaaee', '#66ccee', '#66aacc', '#9966ee', '#ee66cc'],
-                        curveType: 'function',
-                        legend: { position: 'bottom' },
-                        title: 'Серии номеров'
-                      };
-                      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-                      chart.draw(data, options);
-                    }
-                </script>
-                ";
-        return $str;
-    }
-    
-    public function gDrawWithTrendline($chartData) {
-        
-        // Get a groupID which is an innerKey
-        // of a 2-dimensional array.
-    //    $groupID = array_shift(array_keys($chartData[0]));
-        
-        // Prepare rows to add to data
-        $preparedRows = "";
-        $countedRows = count($chartData);
-        $counter = 0;
-        foreach($chartData as $row) {
-        //    $preparedRows .= "[ " . $counter . ", " . $row[$groupID] . " ]";
-            $preparedRows .= "[ " . $counter . ", " . $row . " ]";
-            if($counter < $countedRows - 1) {
-                $preparedRows .= ", ";
-            }
-            $counter++;
-        }
-        
-        $str .= "<script type=\"text/javascript\"
-                src=\"https://www.gstatic.com/charts/loader.js\"></script>
-            /*    <div id=\"chart_div" . $groupID . "\"></div> */
-                <div id=\"chart_div\" style=\"width: 800; height: 600px;\"></div>
-                
-                <script>
-                google.charts.load('current', {packages: ['corechart', 'line']});
-                google.charts.setOnLoadCallback(drawAxisTickColors);
-
-                function drawAxisTickColors() {
-                      var data = new google.visualization.DataTable();
-                      data.addColumn('number', 'N');
-                //      data.addColumn('number', 'Группа " . $groupID . "');
-                      data.addColumn('number', 'Группа');
-
-                      data.addRows([" . $preparedRows . "]);
-
-                      var options = {
-                        hAxis: {
-                          title: 'Draws',
-                          textStyle: {
-                            color: '#01579b',
-                            fontSize: 10,
-                            fontName: 'Arial',
-                            bold: false,
-                            italic: false
-                          },
-                          titleTextStyle: {
-                            color: '#01579b',
-                            fontSize: 10,
-                            fontName: 'Arial',
-                            bold: false,
-                            italic: false
-                          }
-                        },
-                        vAxis: {
-                          title: 'Numbers',
-                          textStyle: {
-                            color: '#1a237e',
-                            fontSize: 12,
-                            bold: false
-                          },
-                          titleTextStyle: {
-                            color: '#1a237e',
-                            fontSize: 12,
-                            bold: false
-                          }
-                        },
-                        colors: ['#097138'],
-                        trendlines: {
-                          0: {type: 'exponential', color: '#333', opacity: 1},
-                          1: {type: 'linear', color: '#111', opacity: .3}
-                        }
-                      };
-                    //  var chart = new google.visualization.LineChart(document.getElementById('chart_div" . $groupID . "'));
-                      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-                      chart.draw(data, options);
-                    }
-                </script>
-                ";
-        return $str;
-    }
-    
-    public function gDrawGROUP($chartData, $groupID) {
-        
-        // Prepare rows to add to data
-        $preparedRows = "";
-        $countedRows = count($chartData);
-        $counter = 0;
-        foreach($chartData as $row) {
-            $preparedRows .= "[ " . $counter . ", " . $row . " ]";
-            if($counter < $countedRows - 1) {
-                $preparedRows .= ", ";
-            }
-            $counter++;
-        }
-        
-        $str .= "<script type=\"text/javascript\"
-                src=\"https://www.gstatic.com/charts/loader.js\"></script>
-                <div id=\"group" . $groupID . "\" style=\"width: 400; height: 300px;\"></div>
-                
-                <script>
-                google.charts.load('current', {packages: ['corechart', 'line']});
-                google.charts.setOnLoadCallback(drawAxisTickColors);
-
-                function drawAxisTickColors() {
-                      var data = new google.visualization.DataTable();
-                      data.addColumn('number', 'N');
-                      data.addColumn('number', 'Группа " . $groupID . "');
-                      data.addRows([" . $preparedRows . "]);
-
-                      var options = {
-                        hAxis: {
-                          title: 'Draws',
-                          textStyle: {
-                            color: '#01579b',
-                            fontSize: 10,
-                            fontName: 'Arial',
-                            bold: false,
-                            italic: false
-                          },
-                          titleTextStyle: {
-                            color: '#01579b',
-                            fontSize: 10,
-                            fontName: 'Arial',
-                            bold: false,
-                            italic: false
-                          }
-                        },
-                        vAxis: {
-                          title: 'Numbers',
-                          textStyle: {
-                            color: '#1a237e',
-                            fontSize: 12,
-                            bold: false
-                          },
-                          titleTextStyle: {
-                            color: '#1a237e',
-                            fontSize: 12,
-                            bold: false
-                          }
-                        },
-                        colors: ['#cc9966'],
-                        curveType: 'function',
-                        legend: { position: 'bottom' },
-                        title: 'Выпавшие в группе номера'
-                      };
-                      var chart = new google.visualization.LineChart(document.getElementById('group" . $groupID . "'));
-                      chart.draw(data, options);
-                    }
-                </script>
-                ";
-        return $str;
-    }
-    
-    public function gDrawSMA($chartData, $groupID, $aggregator) {
-        
-        // Prepare rows to add to data
-        $preparedRows = "";
-        $countedRows = count($chartData);
-        $counter = 0;
-        foreach($chartData as $row) {
-            $preparedRows .= "[ " . $counter . ", " . $row . " ]";
-            if($counter < $countedRows - 1) {
-                $preparedRows .= ", ";
-            }
-            $counter++;
-        }
-        
-        $str .= "<script type=\"text/javascript\"
-                src=\"https://www.gstatic.com/charts/loader.js\"></script>
-                <div id=\"sma" . $groupID . $aggregator . "\" style=\"width: 400; height: 300px;\"></div>
-                
-                <script>
-                google.charts.load('current', {packages: ['corechart', 'line']});
-                google.charts.setOnLoadCallback(drawAxisTickColors);
-
-                function drawAxisTickColors() {
-                      var data = new google.visualization.DataTable();
-                      data.addColumn('number', 'N');
-                      data.addColumn('number', 'Группа " . $groupID . "');
-                      data.addRows([" . $preparedRows . "]);
-
-                      var options = {
-                        hAxis: {
-                          title: 'Draws',
-                          textStyle: {
-                            color: '#01579b',
-                            fontSize: 10,
-                            fontName: 'Arial',
-                            bold: false,
-                            italic: false
-                          },
-                          titleTextStyle: {
-                            color: '#01579b',
-                            fontSize: 10,
-                            fontName: 'Arial',
-                            bold: false,
-                            italic: false
-                          }
-                        },
-                        vAxis: {
-                          title: 'Numbers',
-                          textStyle: {
-                            color: '#1a237e',
-                            fontSize: 12,
-                            bold: false
-                          },
-                          titleTextStyle: {
-                            color: '#1a237e',
-                            fontSize: 12,
-                            bold: false
-                          }
-                        },
-                        colors: ['#6699cc'],
-                        curveType: 'function',
-                        legend: { position: 'bottom' },
-                        title: 'SMA (" . $aggregator . " draws)'
-                      };
-                      var chart = new google.visualization.LineChart(document.getElementById('sma" . $groupID . $aggregator . "'));
-                      chart.draw(data, options);
-                    }
-                </script>
-                ";
-        return $str;
-    }
-    
-    public function gDrawWMA($chartData, $groupID, $aggregator) {
-        
-        // Prepare rows to add to data
-        $preparedRows = "";
-        $countedRows = count($chartData);
-        $counter = 0;
-        foreach($chartData as $row) {
-            $preparedRows .= "[ " . $counter . ", " . $row . " ]";
-            if($counter < $countedRows - 1) {
-                $preparedRows .= ", ";
-            }
-            $counter++;
-        }
-        
-        $str .= "<script type=\"text/javascript\"
-                src=\"https://www.gstatic.com/charts/loader.js\"></script>
-                <div id=\"wma" . $groupID . $aggregator . "\" style=\"width: 400; height: 300px;\"></div>
-                
-                <script>
-                google.charts.load('current', {packages: ['corechart', 'line']});
-                google.charts.setOnLoadCallback(drawAxisTickColors);
-
-                function drawAxisTickColors() {
-                      var data = new google.visualization.DataTable();
-                      data.addColumn('number', 'N');
-                      data.addColumn('number', 'Группа " . $groupID . "');
-                      data.addRows([" . $preparedRows . "]);
-
-                      var options = {
-                        hAxis: {
-                          title: 'Draws',
-                          textStyle: {
-                            color: '#01579b',
-                            fontSize: 10,
-                            fontName: 'Arial',
-                            bold: false,
-                            italic: false
-                          },
-                          titleTextStyle: {
-                            color: '#01579b',
-                            fontSize: 10,
-                            fontName: 'Arial',
-                            bold: false,
-                            italic: false
-                          }
-                        },
-                        vAxis: {
-                          title: 'Numbers',
-                          textStyle: {
-                            color: '#1a237e',
-                            fontSize: 12,
-                            bold: false
-                          },
-                          titleTextStyle: {
-                            color: '#1a237e',
-                            fontSize: 12,
-                            bold: false
-                          }
-                        },
-                        colors: ['#cc9966'],
-                        curveType: 'function',
-                        legend: { position: 'bottom' },
-                        title: 'WMA (" . $aggregator . " draws)'
-                      };
-                      var chart = new google.visualization.LineChart(document.getElementById('wma" . $groupID . $aggregator . "'));
-                      chart.draw(data, options);
-                    }
-                </script>
-                ";
-        return $str;
-    }
-    
-    public function gDrawGroupWithSMA($chartData, $sma, $groupID) {
-        
-        // Prepare rows to add to data
-        $preparedRows = "";
-        $countedRows = count($chartData);
-        $counter = 0;
-        foreach($chartData as $row) {
-            $preparedRows .= "[ " . $counter . ", " . $row . " ]";
-            if($counter < $countedRows - 1) {
-                $preparedRows .= ", ";
-            }
-            $counter++;
-        }
-        
-        $str .= "<script type=\"text/javascript\"
-                src=\"https://www.gstatic.com/charts/loader.js\"></script>
-                <div id=\"group" . $groupID . "\" style=\"width: 400; height: 300px;\"></div>
-                
-                <script>
-                google.charts.load('current', {packages: ['corechart', 'line']});
-                google.charts.setOnLoadCallback(drawAxisTickColors);
-
-                function drawAxisTickColors() {
-                      var data = new google.visualization.DataTable();
-                      data.addColumn('number', 'N');
-                      data.addColumn('number', 'Группа " . $groupID . "');
-                      data.addRows([" . $preparedRows . "]);
-
-                      var options = {
-                        hAxis: {
-                          title: 'Draws',
-                          textStyle: {
-                            color: '#01579b',
-                            fontSize: 10,
-                            fontName: 'Arial',
-                            bold: false,
-                            italic: false
-                          },
-                          titleTextStyle: {
-                            color: '#01579b',
-                            fontSize: 10,
-                            fontName: 'Arial',
-                            bold: false,
-                            italic: false
-                          }
-                        },
-                        vAxis: {
-                          title: 'Numbers',
-                          textStyle: {
-                            color: '#1a237e',
-                            fontSize: 12,
-                            bold: false
-                          },
-                          titleTextStyle: {
-                            color: '#1a237e',
-                            fontSize: 12,
-                            bold: false
-                          }
-                        },
-                        colors: ['#cc9966'],
-                        curveType: 'function',
-                        legend: { position: 'bottom' },
-                        title: 'Выпавшие в группе номера'
-                      };
-                      var chart = new google.visualization.LineChart(document.getElementById('group" . $groupID . "'));
-                      chart.draw(data, options);
-                    }
-                </script>
-                ";
-        return $str;
     }
 }

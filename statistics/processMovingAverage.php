@@ -1,5 +1,5 @@
 <?php
-function processMovingAverage($opt, $draws, $drawmachine, $setofballs, $aggregator) {
+function processMovingAverage($opt, $draws, $drawmachine, $setofballs, $aggregator, $groupID) {
     
     $sqlOptions = "";
     switch($opt) {
@@ -38,9 +38,8 @@ function processMovingAverage($opt, $draws, $drawmachine, $setofballs, $aggregat
     }
     
     // Construct an SQL query
-    $query = "SELECT ";
+    $query = "SELECT `id`, ";
     for($i = 1; $i < LOTTERY_BALLS_NUMBER + 1; $i++) {
-//        $query .= " `ball_" . $i . "` AS `" . $i ."`";
         $query .= " `ball_" . $i . "`";
         if($i < LOTTERY_BALLS_NUMBER) {
             $query .= ", ";
@@ -51,25 +50,55 @@ function processMovingAverage($opt, $draws, $drawmachine, $setofballs, $aggregat
             . " ORDER BY `id` DESC LIMIT " . $draws;
     
     $str = "";
-    $chart = new Chart();
     
     // Get an Array of numbers from DB with constructed SQL query
     $validData = new FullData($query);
     
-    // Display combined graphic for all groups
-//    $str .= $chart->gDraw($validData->get());
+    // Need to join three data sources: group numbers, group sma and group wma
+    // then pass this new array to chart drawer.
+    $gIds = $validData->getIDs();
     
-    // Display numbers/SMA/WMA per group
-    $groupID = 1;
-    $group = $validData->getGroup($groupID);
-    $str .= $chart->gDrawGROUP($group, $groupID);
-    
-    $sma = $validData->getGroupSMA($groupID, $aggregator);
-    $str .= $chart->gDrawSMA($sma, $groupID, $aggregator);
-    
-    $wma = $validData->getGroupWMA($groupID, $aggregator);
-    $str .= $chart->gDrawWMA($wma, $groupID, $aggregator);
-    
+    $str .= "<table>";
+    for($groupID = 1; $groupID < LOTTERY_BALLS_NUMBER + 1; $groupID++) {
+        $str .= "<tr>";
+        $str .= "<td>";
+            $gNums = $validData->getGroup($groupID);
+            $gSma = $validData->getGroupSMA($groupID, $aggregator);
+            $gWma = $validData->getGroupWMA($groupID, $aggregator);
+            $combined = array();
+            for($i = 0; $i < count($gNums); $i++) {
+                array_push($combined, 
+                        [
+                            "ID" => $gIds[$i],
+                            "Group".$groupID => $gNums[$i],
+                            "SMA" => $gSma[$i]['SMA'],
+                            "WMA" => $gWma[$i]['WMA']
+                        ]);
+            }
+            $chart = new LineChart(500, 300);
+            $str .= $chart->draw($combined);
+        $str .= "</td>";
+        $groupID++;
+        $str .= "<td>";
+            $gNums = $validData->getGroup($groupID);
+            $gSma = $validData->getGroupSMA($groupID, $aggregator);
+            $gWma = $validData->getGroupWMA($groupID, $aggregator);
+            $combined = array();
+            for($i = 0; $i < count($gNums); $i++) {
+                array_push($combined, 
+                        [
+                            "ID" => $gIds[$i],
+                            "Group".$groupID => $gNums[$i],
+                            "SMA" => $gSma[$i]['SMA'],
+                            "WMA" => $gWma[$i]['WMA']
+                        ]);
+            }
+            $chart = new LineChart(500, 300);
+            $str .= $chart->draw($combined);
+        $str .= "</td>";
+        $str .= "</tr>";
+    }
+    $str .= "</table>";
     
     return $str;
 }

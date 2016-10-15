@@ -2,9 +2,7 @@
 /**
  * Description of FullData
  * 
- * FullData Object is intended for
- * holding and processing complete
- * DB data. 
+ * FullData Object is intended for holding and processing complete DB data. 
  *
  * @author vmta
  */
@@ -15,27 +13,23 @@ class FullData {
     
     /**
      * Provide access to retrieved data.
-     * @return Array $dbData
+     * @return array
      */
     public function get() { return $this->dbData; }
     
     /**
-     * Class constructor takes parameter in
-     * the form of an SQL query and proceeds
-     * with data retrieval.
+     * Class constructor takes parameter in the form of an SQL query and
+     * proceeds with data retrieval.
      * @param string $dataSet
      */
     public function __construct($dataSet) {
         
         /**
-         * Default SQL query only retrieves VALID
-         * data, i.e. records that have their ID
-         * greater than 917 (as of 2016-10-06).
+         * Default SQL query only retrieves VALID data, i.e. records that have
+         * their ID greater than 917 (as of 2016-10-06).
          * 
-         * Check if parameter is not empty and
-         * equals ALL, then retrieve all available
-         * data from DB, otherwise only VALID data
-         * will be retrieved.
+         * Check if parameter is not empty and equals ALL, then retrieve all
+         * available data from DB, otherwise only VALID data will be retrieved.
          */
         if(!isset($dataSet) || empty($dataSet) || $dataSet === "VALID") {
             $query = "SELECT * FROM `full` WHERE `id` > 917 ORDER BY `id` DESC;";
@@ -46,15 +40,15 @@ class FullData {
         }
         
         /**
-         * Query the DataBase. On success returns
-         * raw data, else dies with error message.
+         * Query the DataBase. On success returns raw data, else dies with
+         * error message.
          */
         $queryResult = mysql_query($query)
             or die("Could not perform ".$query."<br />".mysql_error()."<br />");
         
         /**
-         * Initialize and populate object member
-         * with data from DataBase as an array.
+         * Initialize and populate object member with data from DataBase as
+         * an array.
          */
         $this->dbData = array();
         while($row = mysql_fetch_array($queryResult, MYSQL_ASSOC)) {
@@ -72,33 +66,22 @@ class FullData {
      * @return array
      */
     function getIDs() {
-        $data = $this->get();
-        $ids = array();
-        foreach($data as $row) {
-            array_push($ids, $row["id"]);
-        }
-        return $ids;
+        return array_column($this->get(), "id");
     }
     
     /**
-     * Provide access to an array of Group {1,2,3,4,5,6}
-     * numbers.
-     * @param type $groupID
+     * Provide access to an array of Group {1,2,3,4,5,6} numbers.
+     * @param int $groupID
      * @return array
-     */
+     */    
     function getGroup($groupID) {
-        $data = $this->get();
-        $group = array();
-        foreach($data as $row) {
-            array_push($group, $row["ball_".$groupID]);
-        }
-        return $group;
+        return array_column($this->get(), "ball_".$groupID);
     }
     
     /**
      * Locate MINIMUM number value for the Group.
-     * @param type $groupID
-     * @return type
+     * @param int $groupID
+     * @return int
      */
     function getGroupMIN($groupID) {
         $group = $this->getGroup($groupID);
@@ -108,8 +91,8 @@ class FullData {
     
     /**
      * Locate MAXIMUM number value for the Group.
-     * @param type $groupID
-     * @return type
+     * @param int $groupID
+     * @return int
      */
     function getGroupMAX($groupID) {
         $group = $this->getGroup($groupID);
@@ -119,8 +102,8 @@ class FullData {
     
     /**
      * Calculate AVERAGE number value for the Group.
-     * @param type $groupID
-     * @return type
+     * @param int $groupID
+     * @return int
      */
     function getGroupAVG($groupID) {
         $group = $this->getGroup($groupID);
@@ -138,63 +121,55 @@ class FullData {
     }
     
     /**
-     * Calculate Simple Moving Average (SMA) for the
-     * Group. (Define average for divided groups.)
-     * @param type $groupID
-     * @param type $aggregator
+     * Calculate Simple Moving Average (SMA) for the Group. (Define average for
+     * divided groups.)
+     * @param int $groupID
+     * @param int $aggregator
      * @return array
      */
     function getGroupSMA($groupID, $aggregator) {
+        $ids = $this->getIDs();
         $group = $this->getGroup($groupID);
         $sma = array();
-        $sum = 0;
-        $counter = 1;
-        foreach($group as $value) {
-            if($counter % $aggregator != 0) {
-                $sum += $value;
-            } else {
-                $sum += $value;
-                array_push($sma,($sum / $aggregator));
-                $sum = 0;
+        while(count($group) > 0) {
+            $sum = 0;
+            for($i = 0; $i < $aggregator; $i++) {
+                $sum += $group[$i];
             }
-            $counter++;
+            array_push($sma, ["id" => array_shift($ids), "SMA" => ($sum / $aggregator)]);
+            array_shift($group);
         }
         return $sma;
     }
     
     /**
-     * Calculate Weighted Moving Average (WMA) for the
-     * Group. (Define average for divided groups with
-     * applied weight.)
-     * @param type $groupID
-     * @param type $aggregator
+     * Calculate Weighted Moving Average (WMA) for the Group. (Define average
+     * for divided groups with applied weight.)
+     * @param int $groupID
+     * @param int $aggregator
      * @return array
      */
     function getGroupWMA($groupID, $aggregator) {
+        $ids = $this->getIDs();
         $group = $this->getGroup($groupID);
         $wma = array();
-        $sum = 0;
-        $counter = 1;
-        $factor = $aggregator;
         $denominator = gmp_strval(gmp_fact($aggregator));
-        foreach($group as $value) {
-            if($counter % $aggregator != 0) {
-                $sum += $value * $factor;
+        while(count($group) > 0) {
+            $sum = 0;
+            $factor = $aggregator;
+            for($i = 0; $i < $aggregator; $i++) {
+                $sum += $group[$i] * $factor;
                 $factor--;
-            } else {
-                $sum += $value * $factor;
-                array_push($wma, ($sum / $denominator));
-                $sum = 0;
-                $factor = $aggregator;
             }
-            $counter++;
+            array_push($wma, ["id" => array_shift($ids), "WMA" => ($sum / $denominator)]);
+            array_shift($group);
         }
         return $wma;
     }
     
     /**
      * Merge all groups numbers into one flat Array.
-     * @return type
+     * @return array
      */
     private function mergeNumbers() {
         $bigData = array_merge(
@@ -209,7 +184,7 @@ class FullData {
     
     /**
      * Count appearances of each number in merged array.
-     * @return type
+     * @return array
      */
     private function getNumbersFrequency() {
         $bigData = $this->mergeNumbers();
@@ -218,7 +193,7 @@ class FullData {
     
     /**
      * Get specified quantity of least frequently appearing numbers.
-     * @param type $quantity
+     * @param int $quantity
      * @return array
      */
     function getLeastFrequentNumbers($quantity) {
@@ -240,7 +215,7 @@ class FullData {
     
     /**
      * Get specified quantity of most frequently appearing numbers.
-     * @param type $quantity
+     * @param int $quantity
      * @return array
      */
     function getMostFrequentNumbers($quantity) {
@@ -265,11 +240,10 @@ class FullData {
      * Loop through valid range of numbers (1 through 52)
      *   Loop through each row in bigData
      *     Loop through groups and lookup for a number
-     *       If number matches the one in bigData,
-     *       put difference of last draw ID and the ID
-     *       of this number in bigData into holding array.
-     *       As lookup for this particular number is over,
-     *       break out of two nested loops.
+     *       If number matches the one in bigData, put difference of last draw
+     *       ID and the ID of this number in bigData into holding array.
+     *       As lookup for this particular number is over, break out of two
+     *       nested loops.
      *   Continue with another number.
      * 
      * @return array
@@ -293,7 +267,7 @@ class FullData {
     
     /**
      * Get specified quantity of least latent numbers.
-     * @param type $quantity
+     * @param int $quantity
      * @return array
      */
     function getLeastLatentNumbers($quantity) {
@@ -315,7 +289,7 @@ class FullData {
     
     /**
      * Get specified quantity of most latent numbers.
-     * @param type $quantity
+     * @param int $quantity
      * @return array
      */
     function getMostLatentNumbers($quantity) {

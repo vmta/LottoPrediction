@@ -25,27 +25,12 @@ function displayMovingAverage() {
             . "<option value='3'>3</option>"
             . "<option value='4'>4</option>"
             . ", аггрегатор игр для расчета SMA/WMA:"
-            . "<input type='text' name='aggregator' size='4' value='5'>. "
+            . "<input type='text' name='aggregator' size='4' value='5'>"
+            . " для "
+            . "<input type='text' name='groupID' size='4' value='1'>"
+            ." серии номеров. "
             . "<input type='submit' value='show'>"
             . "</form>";
-    
-    $str .= "<p>Построить графики SMA/WMA используя следующие параметры:<br />
-            - количество игр<br />
-            учитывать игры в которых было выиграно:<br />
-            - 2х номера<br />
-            - 3х номера<br />
-            - 4х номера<br />
-            - 5х номеров<br />
-            - 6х номеров<br />
-            только на лототроне<br />
-            - А<br />
-            - Б<br />
-            только при наборе шаров<br />
-            - 1<br />
-            - 2<br />
-            - 3<br />
-            - 4<br />
-            </p>";
     
     return $str;
 }

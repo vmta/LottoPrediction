@@ -5,10 +5,10 @@
  * @author vmta
  */
 class Combination {
-    var $m = 1;
-    var $n = 1;
+    private $m = 1;
+    private $n = 1;
     
-    public function __construct($m, $n) {
+    function __construct($m, $n) {
         $this->m = $m;
         $this->n = $n;
     }

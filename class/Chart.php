@@ -219,7 +219,6 @@ class Chart {
 	}
 	$str .= "ctx.stroke();";
 	$str .= "</script>";
-	
 	return $str;
     }
 }

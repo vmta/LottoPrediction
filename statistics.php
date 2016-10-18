@@ -1,24 +1,4 @@
 <?php
-// SHALL I NEED THIS FUNCTION?
-function drawChart($opt, $coords){
-	$str = "<canvas style='border:1px solid black;' width='175' height='100' id='Canvas" . $opt . "'></canvas>";
-	$str .= "<script>";
-	$str .= "var canvas = document.getElementById('Canvas" . $opt . "');";
-	$str .= "var ctx = canvas.getContext('2d');";
-	$str .= "ctx.moveTo(0, 100);";
-	for($i = 0; $i < count($coords) - 1; $i++) {
-		$str .= "ctx.lineTo(" . $i . ", " . (100 - $coords[$i]) . ");";
-	}
-	$str .= "ctx.stroke();";
-	$str .= "</script>";
-	
-	return $str;
-}
-
-
-////////////////////////////
-// Process $_GET request. //
-////////////////////////////
 
 $data = "<h2>" . CAT_STATISTICS . "</h2>";
 
@@ -60,7 +40,7 @@ if(isset($_GET['subcat'])) {
         $data .= "<h3>" . SUBCAT_STAT_MOVING_AVERAGE . "</h3>";
         $data .= displayMovingAverage();
         $data .= "<br />";
-        $data .= processMovingAverage($_POST['opt'], $_POST['draws'], $_POST['drawmachine'], $_POST['setofballs'], $_POST['aggregator']);
+        $data .= processMovingAverage($_POST['opt'], $_POST['draws'], $_POST['drawmachine'], $_POST['setofballs'], $_POST['aggregator'], $_POST['groupID']);
     } elseif($_GET['subcat'] == "displaySeries") {
         include "statistics/displaySeries.php";
         $data .= "<h3>" . SUBCAT_STAT_SERIES . "</h3>";

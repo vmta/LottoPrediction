@@ -190,4 +190,36 @@ class Chart {
                 }";
         return $str;
     }
+    
+    //// HAVE TO WORK ON THIS FUNCTION IN ORDER
+    //// TO PROVIDE ACCESS TO MINICHART RENDERING
+    function drawMiniChart($opt, $coords){
+        $cID = $this->getContainerID();
+        $cWidth = $this->getContainerWidth();
+        $cHeight = $this->getContainerHeight();
+        $cK = $cHeight / 100;
+	$str = "<canvas
+                style='border:1px solid black;'
+                width='" . $cWidth . "'
+                height='" . $cHeight . "'
+                id='Canvas" . $cID . "'>
+                </canvas>";
+	$str .= "<script>";
+	$str .= "var canvas = document.getElementById('Canvas"
+                . $cID
+                . "');";
+	$str .= "var ctx = canvas.getContext('2d');";
+	$str .= "ctx.moveTo(0, " . $cHeight . ");";
+	for($i = 0; $i < count($coords) - 1; $i++) {
+		$str .= "ctx.lineTo("
+                        . $i
+                        . ", "
+                        . ($cHeight - round($coords[$i] * $cK))
+                        . ");";
+	}
+	$str .= "ctx.stroke();";
+	$str .= "</script>";
+	
+	return $str;
+    }
 }

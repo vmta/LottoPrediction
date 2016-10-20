@@ -18,6 +18,31 @@ class FullData {
     public function get() { return $this->dbData; }
     
     /**
+     * Reformat FullData Object retrieved in such a way that it results in a
+     * plain text format containing full string of data per row. Such data
+     * shall represent:
+     * ball_1, ball_2, ball_3, ball_4, ball_5, ball_6
+     * @return string
+     */
+    public function getNumbersAsText() {
+        $str ="";
+        $data = $this->get();
+        $lines = 60;
+        foreach($data as $row) {
+            $str .= $row['ball_1'] . " " .
+                    $row['ball_2'] . " " .
+                    $row['ball_3'] . " " .
+                    $row['ball_4'] . " " .
+                    $row['ball_5'] . " " .
+                    $row['ball_6'] . "\n";
+            if(--$lines == 0) {
+                break;
+            }
+        }
+        return $str;
+    }
+    
+    /**
      * Class constructor takes parameter in the form of an SQL query and
      * proceeds with data retrieval.
      * @param string $dataSet

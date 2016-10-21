@@ -18,31 +18,6 @@ class FullData {
     public function get() { return $this->dbData; }
     
     /**
-     * Reformat FullData Object retrieved in such a way that it results in a
-     * plain text format containing full string of data per row. Such data
-     * shall represent:
-     * ball_1, ball_2, ball_3, ball_4, ball_5, ball_6
-     * @return string
-     */
-    public function getNumbersAsText() {
-        $str ="";
-        $data = $this->get();
-        $lines = 60;
-        foreach($data as $row) {
-            $str .= $row['ball_1'] . " " .
-                    $row['ball_2'] . " " .
-                    $row['ball_3'] . " " .
-                    $row['ball_4'] . " " .
-                    $row['ball_5'] . " " .
-                    $row['ball_6'] . "\n";
-            if(--$lines == 0) {
-                break;
-            }
-        }
-        return $str;
-    }
-    
-    /**
      * Class constructor takes parameter in the form of an SQL query and
      * proceeds with data retrieval.
      * @param string $dataSet
@@ -332,5 +307,37 @@ class FullData {
         }
         sort($mostLatentNumbers);
         return $mostLatentNumbers;
+    }
+    
+    /**
+     * Reformat FullData Object retrieved in such a way that it results in a
+     * plain text format containing full string of data per row. Such data
+     * shall represent:
+     * ball_1, ball_2, ball_3, ball_4, ball_5, ball_6
+     * 
+     * UPD: 2016/10/21 (by vmta)
+     * - Introduce @param int $numberOfRecords. Parameter is introduced in order
+     *   to gain some control over the amount of training data for ANN object.
+     *   Defaults to 60 records if no parameter is passed.
+     * 
+     * @param int $numberOfRecords
+     * @return string
+     */
+    public function getNumbersAsText($numberOfRecords) {
+        $str ="";
+        $data = $this->get();
+        $lines = (isset($numberOfRecords)) ? $numberOfRecords : 60;
+        foreach($data as $row) {
+            $str .= $row['ball_1'] . " " .
+                    $row['ball_2'] . " " .
+                    $row['ball_3'] . " " .
+                    $row['ball_4'] . " " .
+                    $row['ball_5'] . " " .
+                    $row['ball_6'] . "\n";
+            if(--$lines == 0) {
+                break;
+            }
+        }
+        return $str;
     }
 }

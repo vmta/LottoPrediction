@@ -22,10 +22,6 @@ class ANN {
     function isTrained() { return $this->annTrained; }
     
     function __construct() {
-//        $this->num_layers = 3;
-//        $this->num_input = 6;
-//        $this->num_neurons_hidden = 1000;
-//        $this->num_output = 6;
         $this->num_layers = (func_num_args() > 0) ? func_get_arg(0) : 3;
         $this->num_input = (func_num_args() > 1) ? func_get_arg(1) : 6;
         $this->num_neurons_hidden = (func_num_args() > 2) ? func_get_arg(2) : 1000;

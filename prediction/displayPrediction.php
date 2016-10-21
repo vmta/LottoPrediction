@@ -13,7 +13,7 @@ function displayPrediction() {
      */
     $trainData = dirname(__FILE__) . "/train.data";
     $fhandle = fopen($trainData, "w");
-    fwrite($fhandle, $validData->getNumbersAsText());
+    fwrite($fhandle, $validData->getNumbersAsText(10));
     fclose($fhandle);
     
     $ann = new ANN();

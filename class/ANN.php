@@ -39,7 +39,7 @@ class ANN {
         $this->annTrained = false;
     }
     
-    function train($trainData) {
+    function train($trainDataFile) {
         $this->clean();
         $this->ann = fann_create_standard(
             $this->num_layers,
@@ -53,7 +53,7 @@ class ANN {
         }
         if(fann_train_on_file(
                 $this->ann,
-                $trainData,
+                $trainDataFile,
                 $this->max_epochs,
                 $this->epochs_between_reports,
                 $this->desired_error
@@ -65,7 +65,7 @@ class ANN {
                 $this->annTrained = true;
             }
         } else {
-            die("Artificial Neural Network could not train on " . $trainData);
+            die("Artificial Neural Network could not train on " . $trainDataFile);
         }
     }
     

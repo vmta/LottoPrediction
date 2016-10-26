@@ -19,6 +19,8 @@ function getSubnav($cat) {
     } elseif($cat === "prediction") {
         $str = "<ul class=\"subnav\">
             <li><a href=\"?cat=" . $cat . "&subcat=displayPrediction\">" . SUBCAT_PREDICTION_AUTO_RANDOM . "</a></li>
+            <li><a href=\"?cat=" . $cat . "&subcat=displayPredictionFANN\">" . SUBCAT_PREDICTION_FANN . "</a></li>
+            <li><a href=\"?cat=" . $cat . "&subcat=displayPredictionFunc\">" . SUBCAT_PREDICTION_FUNC . "</a></li>
             </ul>";
     }
     return $str;

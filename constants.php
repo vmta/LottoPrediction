@@ -20,7 +20,9 @@ define("SUBCAT_ANALYSIS_BERNULLI","Вероятность по Бернулли"
 define("SUBCAT_ANALYSIS_LAPLACE","Вероятность по Лапласу");
 define("SUBCAT_ANALYSIS_CORRELATION_COEFFICIENT","Коэффициент корреляции");
 
-define("SUBCAT_PREDICTION_AUTO_RANDOM","Автоматическая генерация случайной комбинации");
+define("SUBCAT_PREDICTION_AUTO_RANDOM","Авто генерация случайной комбинации");
+define("SUBCAT_PREDICTION_FANN","Генерация комбинации нейронной сетью");
+define("SUBCAT_PREDICTION_FUNC","Функциональная генерация комбинации");
 
 define("JACK_POT","Джек Пот");
 define("JACK_POTS","Джек Поты");

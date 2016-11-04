@@ -29,7 +29,10 @@ if(isset($_GET['subcat'])) {
         $data .= "<h3>" . SUBCAT_STAT_MIN_MAX_AVG . "</h3>";
         $data .= displayMinMaxAvg();
         $data .= "<br />";
-        $data .= processMinMaxAvg($_POST['opt'], $_POST['draws'], $_POST['drawmachine'], $_POST['setofballs']);
+        $data .= processMinMaxAvg($_POST['opt'],
+                $_POST['draws'],
+                $_POST['drawmachine'],
+                $_POST['setofballs']);
     } elseif($_GET['subcat'] == "displayMovingAverage") {
         include "statistics/displayMovingAverage.php";
         $data .= "<h3>" . SUBCAT_STAT_MOVING_AVERAGE . "</h3>";
@@ -40,7 +43,12 @@ if(isset($_GET['subcat'])) {
         $data .= "<h3>" . SUBCAT_STAT_MOVING_AVERAGE . "</h3>";
         $data .= displayMovingAverage();
         $data .= "<br />";
-        $data .= processMovingAverage($_POST['opt'], $_POST['draws'], $_POST['drawmachine'], $_POST['setofballs'], $_POST['aggregator'], $_POST['groupID']);
+        $data .= processMovingAverage($_POST['opt'],
+                $_POST['draws'],
+                $_POST['drawmachine'],
+                $_POST['setofballs'],
+                $_POST['aggregator'],
+                $_POST['groupID']);
     } elseif($_GET['subcat'] == "displaySeries") {
         include "statistics/displaySeries.php";
         $data .= "<h3>" . SUBCAT_STAT_SERIES . "</h3>";
@@ -61,7 +69,27 @@ if(isset($_GET['subcat'])) {
         $data .= "<h3>" . SUBCAT_STAT_RELATIVE_FREQUENCY . "</h3>";
         $data .= displayRelativeFrequency();
         $data .= "<br />";
-        $data .= processRelativeFrequency($_POST['opt'], $_POST['draws'], $_POST['drawmachine'], $_POST['setofballs']);
+        $data .= processRelativeFrequency($_POST['opt'],
+                $_POST['draws'],
+                $_POST['drawmachine'],
+                $_POST['setofballs']);
+    } elseif($_GET['subcat'] == "displayPerformanceVariations") {
+        include "statistics/displayPerformanceVariations.php";
+        $data .= "<h3>" . SUBCAT_STAT_PERFORMANCE_VARIATIONS . "</h3>";
+        $data .= displayPerformanceVariations();
+    } elseif($_GET['subcat'] == "processPerformanceVariations") {
+        include "statistics/displayPerformanceVariations.php";
+        include "statistics/processPerformanceVariations.php";
+        $data .= "<h3>" . SUBCAT_STAT_PERFORMANCE_VARIATIONS . "</h3>";
+        $data .= displayPerformanceVariations();
+        $data .= "<br />";
+        $data .= processPerformanceVariations($_POST['draws'],
+                $_POST['drawmachine'],
+                $_POST['setofballs'],
+                $_POST['aggregator'],
+                $_POST['groupID'],
+                $_POST['algorithm'],
+                $_POST['forecastFrame']);
     }
 } else {
     include "home/displayLastGames.php";

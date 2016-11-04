@@ -13,6 +13,7 @@ define("SUBCAT_STAT_MIN_MAX_AVG","Граничные и средние знач�
 define("SUBCAT_STAT_SERIES","Серии");
 define("SUBCAT_STAT_RELATIVE_FREQUENCY","Относительная частота W(A)=m/n");
 define("SUBCAT_STAT_MOVING_AVERAGE","Скользящее среднее");
+define("SUBCAT_STAT_PERFORMANCE_VARIATIONS","Показатели вариации");
 
 define("SUBCAT_ANALYSIS_CHECKTICKET","Проверка номеров");
 define("SUBCAT_ANALYSIS_PROBABILITY","Вероятность");

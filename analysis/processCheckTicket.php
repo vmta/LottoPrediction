@@ -36,11 +36,11 @@ function processCheckTicket($drawDate, $drawID, $drawNums, $iterationDepth) {
                             : " WHERE `date` LIKE '" . $drawDate . "'")
                     : " WHERE `id` = " . $drawID);
     }
-    $q_res = mysql_query($query)
-            or die("Could not perform ".$query."<br />".mysql_error()."<br />");
+    $q_res = mysqli_query($query)
+            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
     $str = "";
-    if(mysql_num_rows($q_res)) {
-        while($row = mysql_fetch_array($q_res, MYSQL_ASSOC)){
+    if(mysqli_num_rows($q_res)) {
+        while($row = mysqli_fetch_array($q_res, MYSQL_ASSOC)){
             $hitsNumber = 0;
             $str .= "<div width='100%' style='display: table;'>";
             $str .= "<h2>Winning combination for draw " . $drawID . "</h2>";
@@ -59,9 +59,9 @@ function processCheckTicket($drawDate, $drawID, $drawNums, $iterationDepth) {
                 $query1 = "SELECT `award_" . $hitsNumber . "` "
                         . "FROM `full` WHERE `id`="
                         . $drawID;
-                $q_res1 = mysql_query($query1)
-                        or die("Could not perform ".$query."<br />".mysql_error()."<br />");
-                $row1 = mysql_fetch_row($q_res1);
+                $q_res1 = mysqli_query($query1)
+                        or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+                $row1 = mysqli_fetch_row($q_res1);
                 $award = $row1[0];
                 $str .= "<p>You've guessed <b>"
                         . $hitsNumber
@@ -69,7 +69,7 @@ function processCheckTicket($drawDate, $drawID, $drawNums, $iterationDepth) {
                         . "possible and won <b>"
                         . (($hitsNumber < 2) ? "nothing" : $award)
                         . "</b>.</p>";
-                mysql_free_result($q_res1);
+                mysqli_free_result($q_res1);
             }
             $drawID--;
         }
@@ -81,6 +81,6 @@ function processCheckTicket($drawDate, $drawID, $drawNums, $iterationDepth) {
         }
         $str .= "</div>";
     }
-    mysql_free_result($q_res);
+    mysqli_free_result($q_res);
     return $str;
 }

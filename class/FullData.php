@@ -43,22 +43,22 @@ class FullData {
          * Query the DataBase. On success returns raw data, else dies with
          * error message.
          */
-        $queryResult = mysql_query($query)
-            or die("Could not perform ".$query."<br />".mysql_error()."<br />");
+        $queryResult = mysqli_query($query)
+            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
         
         /**
          * Initialize and populate object member with data from DataBase as
          * an array.
          */
         $this->dbData = array();
-        while($row = mysql_fetch_array($queryResult, MYSQL_ASSOC)) {
+        while($row = mysqli_fetch_array($queryResult, MYSQL_ASSOC)) {
             array_push($this->dbData, $row);
         }
         
         /**
          * Free resources: SQL query result.
          */
-        mysql_free_result($queryResult);
+        mysqli_free_result($queryResult);
     }
     
     /**

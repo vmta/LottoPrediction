@@ -2,9 +2,9 @@
 function displayJackPot($balls, $records) {
     $str;
     $query = "SELECT * FROM `full` WHERE `guess_" . (empty($balls) ? 6 : $balls) . "` > 0 ORDER BY `id` DESC LIMIT " . (empty($records) ? 100 : $records) . ";";
-    $q_res = mysql_query($query)
-            or die("Could not perform ".$query."<br />".mysql_error()."<br />");
-    if(mysql_num_rows($q_res)) {
+    $q_res = mysqli_query($query)
+            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+    if(mysqli_num_rows($q_res)) {
 //        $coords = array('1'=>array(), '2'=>array(), '3'=>array(), '4'=>array(), '5'=>array(), '6'=>array());
 //        $count = 0;
         
@@ -24,7 +24,7 @@ function displayJackPot($balls, $records) {
                 . "<th>V</th>"
                 . "<th>VI</th>"
                 . "</tr>";
-        while($row = mysql_fetch_array($q_res, MYSQL_ASSOC)) {
+        while($row = mysqli_fetch_array($q_res, MYSQL_ASSOC)) {
 //            $coords[1][$count] = $row['ball_1'];
 //            $coords[2][$count] = $row['ball_2'];
 //            $coords[3][$count] = $row['ball_3'];
@@ -63,6 +63,6 @@ function displayJackPot($balls, $records) {
 //        }
 //        $str .= "</script>";
     }
-    mysql_free_result($q_res);
+    mysqli_free_result($q_res);
     return $str;
 }

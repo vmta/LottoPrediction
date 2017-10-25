@@ -15,9 +15,9 @@ class LaplaceConstant {
     }
     
     private function getDataFromDB() {
-        $q = mysql_query($this->queryLP)
-                or die("Could not perform ".$query."<br />".mysql_error()."<br />");
-        $r = mysql_fetch_row($q);
+        $q = mysqli_query($this->queryLP)
+                or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+        $r = mysqli_fetch_row($q);
         $res = ($r == NULL) ? "0" : $r[0];
         return $res;
     }

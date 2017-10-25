@@ -12,9 +12,9 @@ function displayCheckTicket($drawDate, $drawID, $drawNums, $iterationDepth) {
             . "`ball_6` "
             . "FROM `full` "
             . "WHERE `id` = (SELECT MAX(`id`) FROM `full`)";
-    $q_res = mysql_query($query)
-            or die("Could not perform ".$query."<br />".mysql_error()."<br />");
-    $row = mysql_fetch_row($q_res);
+    $q_res = mysqli_query($query)
+            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+    $row = mysqli_fetch_row($q_res);
     if(empty($drawID)) {
         $drawID = $row[0];
     }
@@ -29,7 +29,7 @@ function displayCheckTicket($drawDate, $drawID, $drawNums, $iterationDepth) {
             . $row[6] . ";"
             . $row[7];
     }
-    mysql_free_result($q_res);
+    mysqli_free_result($q_res);
     
     $str = "<p>Введите комбинацию цифр, разделенных точкой с запятой</p>
         <form method='post' action='index.php?cat=analysis&subcat=processCheckTicket' accept-charset='utf-8'>

@@ -64,13 +64,13 @@ function processEnterNewDraw() {
 		" . $award_6 ."
             )";
     
-    $q_res = mysql_query($query)
-            or die("Could not perform ".$query."<br />".mysql_error()."<br />");
-    mysql_free_result($q_res);
+    $q_res = mysqli_query($query)
+            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+    mysqli_free_result($q_res);
     
-    if(mysql_error() == "") {
-        return "Record " . mysql_insert_id() . " successfully added.";
+    if(mysqli_error() == "") {
+        return "Record " . mysqli_insert_id() . " successfully added.";
     } else {
-        return mysql_error();
+        return mysqli_error();
     }
 }

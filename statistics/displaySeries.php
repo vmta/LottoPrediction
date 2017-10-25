@@ -86,9 +86,9 @@ function queryConstructor($type, $key) {
 
 function getCurrentDrawNumber() {
     $q = "SELECT MAX(`id`) FROM `full`;";
-    $q_res = mysql_query($q)
-            or die("Could not perform ".$q."<br />".mysql_error()."<br />");
-    $row = mysql_fetch_row($q_res);
+    $q_res = mysqli_query($q)
+            or die("Could not perform ".$q."<br />".mysqli_error()."<br />");
+    $row = mysqli_fetch_row($q_res);
     return $row[0];
 }
 
@@ -104,9 +104,9 @@ function getArrayWins() {
     $arr = createArray();
     foreach(array_keys($arr) as $key) {
         $query = queryConstructor("Wins", $key);
-        $q_res = mysql_query($query)
-                or die("Could not perform ".$query."<br />".mysql_error()."<br />");
-        $row = mysql_fetch_row($q_res);
+        $q_res = mysqli_query($query)
+                or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+        $row = mysqli_fetch_row($q_res);
         $arr[$key] = $row[0];
     }
     return $arr;
@@ -117,9 +117,9 @@ function getArrayNoWins() {
     $arr = createArray();
     foreach(array_keys($arr) as $key) {
         $query = queryConstructor("NoWins", $key);
-        $q_res = mysql_query($query)
-                or die("Could not perform ".$query."<br />".mysql_error()."<br />");
-        $row = mysql_fetch_row($q_res);
+        $q_res = mysqli_query($query)
+                or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+        $row = mysqli_fetch_row($q_res);
         $arr[$key] = $currentDrawNumber - $row[0];
     }
     arsort($arr);

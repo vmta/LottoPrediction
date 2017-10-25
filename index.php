@@ -46,7 +46,7 @@ if(isset($_GET['cat'])) {
     include "home/displayJackPot.php";
     include "home/displayLastGames.php";
     $data = "<h2>" . CAT_HOME . "</h2>";
-    $data .= displayJackPot();
+#    $data .= displayJackPot();
     $data .= displayJackPot(5, 50);
     $data .= displayLastGames(10, true);
     echo $data;
@@ -55,7 +55,7 @@ if(isset($_GET['cat'])) {
 </div>
 
 <?php
-mysql_close($dbCon);
+mysqli_close($dbCon);
 echo "<div class=\"footer\">&copy; " . date("Y") . " vmta</div>";
 ?>
 

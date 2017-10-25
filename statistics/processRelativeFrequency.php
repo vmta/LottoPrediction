@@ -62,9 +62,9 @@ function processRelativeFrequency($opt, $draws, $drawmachine, $setofballs) {
             . "GROUP BY hot "
             . "ORDER BY hits DESC;";
     
-    $q_res = mysql_query($query)
-            or die("Could not perform ".$query."<br />".mysql_error()."<br />");
-    if(mysql_num_rows($q_res)) {
+    $q_res = mysqli_query($query)
+            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+    if(mysqli_num_rows($q_res)) {
         $coords = array();
         $str .= "<span class=\"tableContainer\">"
                 . "<table>"
@@ -77,12 +77,12 @@ function processRelativeFrequency($opt, $draws, $drawmachine, $setofballs) {
                 . "<th>" . CONST_RATIO . "</th>"
                 . "</tr>"
                 . "<tr>"
-                . "<td colspan=3>" . mysql_num_rows($q_res) . " совпадений"
+                . "<td colspan=3>" . mysqli_num_rows($q_res) . " совпадений"
                 . (($drawmachine == "All" || empty($drawmachine)) ? "" : " по лототрону ".$drawmachine)
                 . (($setofballs == "All" || empty($setofballs)) ? "" : " и набору шаров ".$setofballs)
                 . ".</td>"
                 . "</tr>";
-        while($row = mysql_fetch_array($q_res, MYSQL_ASSOC)) {
+        while($row = mysqli_fetch_array($q_res, MYSQL_ASSOC)) {
             array_push($coords, (int) $row['ratio']);
             if((int) $row['ratio'] > $treshold_upper) {
                 $str .= "<tr class=\"highlight-green\">";
@@ -99,7 +99,7 @@ function processRelativeFrequency($opt, $draws, $drawmachine, $setofballs) {
         $str .= "</table>"
                 . "</span>";
     }
-    mysql_free_result($q_res);
+    mysqli_free_result($q_res);
     
     return $str;
 }

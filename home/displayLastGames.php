@@ -4,14 +4,14 @@ function displayLastGames($opt, $highlight) {
     if(empty($highlight)) { $highlight = false; }
     $str;
     $query = "SELECT * FROM `full` ORDER BY `id` DESC LIMIT " . $opt . ";";
-    $q_res = mysql_query($query)
-            or die("Could not perform ".$query."<br />".mysql_error()."<br />");
-    $q_res_copy = mysql_query($query)
-            or die("Could not perform ".$query."<br />".mysql_error()."<br />");
+    $q_res = mysqli_query($query)
+            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+    $q_res_copy = mysqli_query($query)
+            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
     
     $mArr = array();
-    if(mysql_num_rows($q_res_copy)) {
-        while($row = mysql_fetch_array($q_res_copy, MYSQL_ASSOC)) {
+    if(mysqli_num_rows($q_res_copy)) {
+        while($row = mysqli_fetch_array($q_res_copy, MYSQL_ASSOC)) {
             $mArr[$row['ball_1']]++;
             $mArr[$row['ball_2']]++;
             $mArr[$row['ball_3']]++;
@@ -21,7 +21,7 @@ function displayLastGames($opt, $highlight) {
         }
     }
     
-    if(mysql_num_rows($q_res)) {
+    if(mysqli_num_rows($q_res)) {
         $str = "<span class=\"tableContainer\">"
                 . "<table>"
                 . "<tr>"
@@ -37,7 +37,7 @@ function displayLastGames($opt, $highlight) {
                 . "<th>V</th>"
                 . "<th>VI</th>"
                 . "</tr>";
-        while($row = mysql_fetch_array($q_res, MYSQL_ASSOC)) {
+        while($row = mysqli_fetch_array($q_res, MYSQL_ASSOC)) {
             $hl_begin = "";
             $hl_end = "";
             if($highlight) {
@@ -83,6 +83,6 @@ function displayLastGames($opt, $highlight) {
         $str .= "</table>"
                 . "</span>";
     }
-    mysql_free_result($q_res);
+    mysqli_free_result($q_res);
     return $str;
 }

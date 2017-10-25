@@ -54,10 +54,10 @@ function processCorrelationCoefficient($pair, $opt, $draws, $drawmachine, $setof
             . " ORDER BY `id` DESC"
             . (!empty($draws) ? " LIMIT " . $draws : "");
     
-    $q_res = mysql_query($query)
-            or die("Could not perform ".$query."<br />".mysql_error()."<br />");
-    if(mysql_num_rows($q_res)) {
-        while($row = mysql_fetch_array($q_res, MYSQL_ASSOC)) {
+    $q_res = mysqli_query($query)
+            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+    if(mysqli_num_rows($q_res)) {
+        while($row = mysqli_fetch_array($q_res, MYSQL_ASSOC)) {
             array_push($arrayFull, $row);
         }
     }
@@ -87,7 +87,7 @@ function processCorrelationCoefficient($pair, $opt, $draws, $drawmachine, $setof
             }
             </script>";
     
-    mysql_free_result($q_res);
+    mysqli_free_result($q_res);
     return $str;
 }
 

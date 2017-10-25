@@ -28,8 +28,11 @@ if(!function_exists('classAutoLoader')){
 spl_autoload_register('classAutoLoader');
 
 require "constants.php";
-require "db/config.php";
-require "db/connect.php";
+
+//global $myHost, $myUser, $myPass, $myDB, $dbCon;
+//require "db/config.php";
+//require "db/connect.php";
+
 include "navigation/topnav.php";
 if(isset($_GET['cat'])) {
     include "navigation/subnav.php";
@@ -55,7 +58,7 @@ if(isset($_GET['cat'])) {
 </div>
 
 <?php
-mysqli_close($dbCon);
+//mysqli_close($dbCon);
 echo "<div class=\"footer\">&copy; " . date("Y") . " vmta</div>";
 ?>
 

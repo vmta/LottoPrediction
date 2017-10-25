@@ -74,7 +74,7 @@ function processBernulli($opt, $draws, $drawmachine, $setofballs) {
                 . ".</td>"
                 . "</tr>";
         $i = 1;
-        while($row = mysqli_fetch_array($q_res, MYSQL_ASSOC)) {
+        while($row = mysqli_fetch_array($q_res, MYSQLI_ASSOC)) {
             $str .= "<tr>"
                 . "<td class=\"hot\">".$row['hot']."</td>"
                 . "<td class=\"hits\">".$row['hits']."</td>"

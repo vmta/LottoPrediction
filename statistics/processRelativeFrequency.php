@@ -82,7 +82,7 @@ function processRelativeFrequency($opt, $draws, $drawmachine, $setofballs) {
                 . (($setofballs == "All" || empty($setofballs)) ? "" : " и набору шаров ".$setofballs)
                 . ".</td>"
                 . "</tr>";
-        while($row = mysqli_fetch_array($q_res, MYSQL_ASSOC)) {
+        while($row = mysqli_fetch_array($q_res, MYSQLI_ASSOC)) {
             array_push($coords, (int) $row['ratio']);
             if((int) $row['ratio'] > $treshold_upper) {
                 $str .= "<tr class=\"highlight-green\">";

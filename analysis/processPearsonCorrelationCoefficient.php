@@ -55,7 +55,7 @@ function processPearsonCorrelationCoefficient($pair, $opt, $draws, $drawmachine,
     $q_res = mysqli_query($query)
             or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
     if(mysqli_num_rows($q_res)) {
-        while($row = mysqli_fetch_array($q_res, MYSQL_ASSOC)) {
+        while($row = mysqli_fetch_array($q_res, MYSQLI_ASSOC)) {
             array_push($arrayFull, $row);
         }
     }

@@ -1,29 +1,32 @@
 <?php
 /**
  * Description of FullData
- * 
- * FullData Object is intended for holding and processing complete DB data. 
+ *
+ * FullData Object is intended for holding and processing complete DB data.
  *
  * @author vmta
  */
 class FullData {
-    
+
+    // DB Connection
+    private $dbCon;
+
     // Hold retrieved data as Array.
     private $dbData;
-    
+
     /**
      * Provide access to retrieved data.
      * @return array
      */
     public function get() { return $this->dbData; }
-    
+
     /**
      * Class constructor takes parameter in the form of an SQL query and
      * proceeds with data retrieval.
      * @param string $dataSet
      */
     public function __construct($dataSet) {
-        
+
         /**
          * Default SQL query only retrieves VALID data, i.e. records that have
          * their ID greater than 917 (as of 2016-10-06).
@@ -38,20 +41,21 @@ class FullData {
         } else {
             $query = $dataSet;
         }
-        
+
         /**
          * Query the DataBase. On success returns raw data, else dies with
          * error message.
          */
-        $queryResult = mysqli_query($query)
-            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
-        
+        require "db/connect.php";
+        $queryResult = mysqli_query($dbCon, $query);
+//            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+
         /**
          * Initialize and populate object member with data from DataBase as
          * an array.
          */
         $this->dbData = array();
-        while($row = mysqli_fetch_array($queryResult, MYSQL_ASSOC)) {
+        while($row = mysqli_fetch_array($queryResult, MYSQLI_ASSOC)) {
             array_push($this->dbData, $row);
         }
         
@@ -250,7 +254,9 @@ class FullData {
      */
     function getNumbersLatency() {
         $bigData = $this->get();
-        $latestDrawID = array_shift($this->getIDs());
+$ids = $this->getIDs();
+$latestDrawID = array_shift($ids);
+//        $latestDrawID = array_shift($this->getIDs());
         $latentNumbers = array_fill(1, 52, 0);
         for($number = LOTTERY_MIN_NUMBER; $number < LOTTERY_MAX_NUMBER + 1; $number++) {
             foreach($bigData as $row) {

@@ -40,7 +40,7 @@ function processCheckTicket($drawDate, $drawID, $drawNums, $iterationDepth) {
             or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
     $str = "";
     if(mysqli_num_rows($q_res)) {
-        while($row = mysqli_fetch_array($q_res, MYSQL_ASSOC)){
+        while($row = mysqli_fetch_array($q_res, MYSQLI_ASSOC)){
             $hitsNumber = 0;
             $str .= "<div width='100%' style='display: table;'>";
             $str .= "<h2>Winning combination for draw " . $drawID . "</h2>";

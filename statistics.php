@@ -93,7 +93,7 @@ if(isset($_GET['subcat'])) {
     }
 } else {
     include "home/displayLastGames.php";
-    $data .= displayLastGames(20);
+    $data .= displayLastGames(20, true);
 }
 
 echo $data;

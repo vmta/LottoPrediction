@@ -1,5 +1,11 @@
 <?php
+
 function processEnterNewDraw() {
+
+    require "db/config.php";
+    $dbCon = mysqli_connect("p:".$myHost, $myUser, $myPass, $myDB);
+    mysqli_set_charset($dbCon, 'utf8');
+
     $date = $_POST['drawDate'];
     $draw_machine = $_POST['drawMachine'];
     $set_of_balls = $_POST['setOfBalls'];
@@ -64,13 +70,13 @@ function processEnterNewDraw() {
 		" . $award_6 ."
             )";
     
-    $q_res = mysqli_query($query)
-            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
-    mysqli_free_result($q_res);
+    $q_res = mysqli_query($dbCon, $query);
+//            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+//    mysqli_free_result($q_res);
     
-    if(mysqli_error() == "") {
-        return "Record " . mysqli_insert_id() . " successfully added.";
+    if(mysqli_error($dbCon) == "") {
+        return "Record " . mysqli_insert_id($dbCon) . " successfully added.";
     } else {
-        return mysqli_error();
+        return mysqli_error($dbCon);
     }
 }

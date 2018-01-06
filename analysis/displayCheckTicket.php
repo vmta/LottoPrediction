@@ -1,5 +1,9 @@
 <?php
 function displayCheckTicket($drawDate, $drawID, $drawNums, $iterationDepth) {
+
+    require "db/config.php";
+    $dbCon = mysqli_connect("p:".$myHost, $myUser, $myPass, $myDB);
+    mysqli_set_charset($dbCon, 'utf8');
     
     $query = "SELECT "
             . "`id`, "
@@ -13,7 +17,6 @@ function displayCheckTicket($drawDate, $drawID, $drawNums, $iterationDepth) {
             . "FROM `full` "
             . "WHERE `id` = (SELECT MAX(`id`) FROM `full`)";
     $q_res = mysqli_query($dbCon, $query);
-            //or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
     $row = mysqli_fetch_row($q_res);
     if(empty($drawID)) {
         $drawID = $row[0];

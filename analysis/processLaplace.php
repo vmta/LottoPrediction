@@ -4,6 +4,11 @@ include "class/probability.analysis.php";
 include "class/LaplaceConstant.php";
 
 function processLaplace($opt, $draws, $drawmachine, $setofballs, $functionName) {
+
+    require "db/config.php";
+    $dbCon = mysqli_connect("p:".$myHost, $myUser, $myPass, $myDB);
+    mysqli_set_charset($dbCon, 'utf8');
+    
     switch($opt) {
         case "3x":
             $opt1 = " WHERE `guess_3` > 0 ";
@@ -55,7 +60,6 @@ function processLaplace($opt, $draws, $drawmachine, $setofballs, $functionName) 
     $query .= ") AS t1 GROUP BY hot ORDER BY hot ASC;";
     
     $q_res = mysqli_query($dbCon, $query);
-            //or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
     if(mysqli_num_rows($q_res)) {
         $str = "<span class=\"tableContainer\">"
                 . "<table>"

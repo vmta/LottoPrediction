@@ -71,8 +71,6 @@ function processEnterNewDraw() {
             )";
     
     $q_res = mysqli_query($dbCon, $query);
-//            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
-//    mysqli_free_result($q_res);
     
     if(mysqli_error($dbCon) == "") {
         return "Record " . mysqli_insert_id($dbCon) . " successfully added.";

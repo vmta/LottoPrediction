@@ -46,9 +46,9 @@ class FullData {
          * Query the DataBase. On success returns raw data, else dies with
          * error message.
          */
-        require "db/connect.php";
-        $queryResult = mysqli_query($dbCon, $query);
-//            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+        require "db/config.php";
+        $dbCon = mysqli_connect("p:".$myHost, $myUser, $myPass, $myDB);
+        mysqli_set_charset($dbCon, 'utf8');
 
         /**
          * Initialize and populate object member with data from DataBase as

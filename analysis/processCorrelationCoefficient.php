@@ -2,6 +2,10 @@
 include "class/Correlation.php";
 
 function processCorrelationCoefficient($pair, $opt, $draws, $drawmachine, $setofballs) {
+
+    require "db/config.php";
+    $dbCon = mysqli_connect("p:".$myHost, $myUser, $myPass, $myDB);
+    mysqli_set_charset($dbCon, 'utf8');
     
     $arrayFull = array();
     
@@ -55,7 +59,6 @@ function processCorrelationCoefficient($pair, $opt, $draws, $drawmachine, $setof
             . (!empty($draws) ? " LIMIT " . $draws : "");
     
     $q_res = mysqli_query($dbCon, $query);
-            //or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
     if(mysqli_num_rows($q_res)) {
         while($row = mysqli_fetch_array($q_res, MYSQL_ASSOC)) {
             array_push($arrayFull, $row);

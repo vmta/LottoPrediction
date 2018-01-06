@@ -4,11 +4,11 @@ function displayJackPot($balls, $records) {
 
     require "db/config.php";
     $dbCon = mysqli_connect("p:".$myHost, $myUser, $myPass, $myDB);
+    mysqli_set_charset($dbCon, 'utf8');
 
     $str;
     $query = "SELECT * FROM `full` WHERE `guess_" . (empty($balls) ? 6 : $balls) . "` > 0 ORDER BY `id` DESC LIMIT " . (empty($records) ? 100 : $records) . ";";
     $q_res = mysqli_query($dbCon, $query);
-//            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
     if(mysqli_num_rows($q_res)) {
 //        $coords = array('1'=>array(), '2'=>array(), '3'=>array(), '4'=>array(), '5'=>array(), '6'=>array());
 //        $count = 0;

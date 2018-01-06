@@ -92,7 +92,6 @@ function getCurrentDrawNumber() {
     
     $q = "SELECT MAX(`id`) FROM `full`;";
     $q_res = mysqli_query($dbCon, $q);
-           //or die("Could not perform ".$q."<br />".mysqli_error()."<br />");
     $row = mysqli_fetch_row($q_res);
     return $row[0];
 }
@@ -115,7 +114,6 @@ function getArrayWins() {
     foreach(array_keys($arr) as $key) {
         $query = queryConstructor("Wins", $key);
         $q_res = mysqli_query($dbCon, $query);
-                //or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
         $row = mysqli_fetch_row($q_res);
         $arr[$key] = $row[0];
     }
@@ -133,7 +131,6 @@ function getArrayNoWins() {
     foreach(array_keys($arr) as $key) {
         $query = queryConstructor("NoWins", $key);
         $q_res = mysqli_query($dbCon, $query);
-                //or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
         $row = mysqli_fetch_row($q_res);
         $arr[$key] = $currentDrawNumber - $row[0];
     }

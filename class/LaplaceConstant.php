@@ -15,8 +15,12 @@ class LaplaceConstant {
     }
     
     private function getDataFromDB() {
+
+        require "db/config.php";
+        $dbCon = mysqli_connect("p:".$myHost, $myUser, $myPass, $myDB);
+        mysqli_set_charset($dbCon, 'utf8');
+
         $q = mysqli_query($dbCon, $this->queryLP);
-                //or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
         $r = mysqli_fetch_row($q);
         $res = ($r == NULL) ? "0" : $r[0];
         return $res;

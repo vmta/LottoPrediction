@@ -3,15 +3,14 @@ function displayLastGames($opt, $highlight) {
 
     require "db/config.php";
     $dbCon = mysqli_connect("p:".$myHost, $myUser, $myPass, $myDB);
+    mysqli_set_charset($dbCon, 'utf8');
 
     if(empty($opt)) { $opt = 10; }
     if(empty($highlight)) { $highlight = false; }
     $str;
     $query = "SELECT * FROM `full` ORDER BY `id` DESC LIMIT " . $opt . ";";
     $q_res = mysqli_query($dbCon, $query);
-//            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
     $q_res_copy = mysqli_query($dbCon, $query);
-//            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
     
     $mArr = array();
     if(mysqli_num_rows($q_res_copy)) {

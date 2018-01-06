@@ -85,6 +85,11 @@ function queryConstructor($type, $key) {
 }
 
 function getCurrentDrawNumber() {
+
+    require "db/config.php";
+    $dbCon = mysqli_connect("p:".$myHost, $myUser, $myPass, $myDB);
+    mysqli_set_charset($dbCon, 'utf8');
+    
     $q = "SELECT MAX(`id`) FROM `full`;";
     $q_res = mysqli_query($dbCon, $q);
            //or die("Could not perform ".$q."<br />".mysqli_error()."<br />");
@@ -101,6 +106,11 @@ function createArray() {
 }
 
 function getArrayWins() {
+
+    require "db/config.php";
+    $dbCon = mysqli_connect("p:".$myHost, $myUser, $myPass, $myDB);
+    mysqli_set_charset($dbCon, 'utf8');
+
     $arr = createArray();
     foreach(array_keys($arr) as $key) {
         $query = queryConstructor("Wins", $key);
@@ -113,6 +123,11 @@ function getArrayWins() {
 }
 
 function getArrayNoWins() {
+
+    require "db/config.php";
+    $dbCon = mysqli_connect("p:".$myHost, $myUser, $myPass, $myDB);
+    mysqli_set_charset($dbCon, 'utf8');
+
     $currentDrawNumber = getCurrentDrawNumber();
     $arr = createArray();
     foreach(array_keys($arr) as $key) {

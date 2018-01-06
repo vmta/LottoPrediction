@@ -53,8 +53,8 @@ function processBernulli($opt, $draws, $drawmachine, $setofballs) {
     }
     $query .= ") AS t1 GROUP BY hot ORDER BY hot ASC;";
     
-    $q_res = mysqli_query($query)
-            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+    $q_res = mysqli_query($dbCon, $query);
+            //or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
     if(mysqli_num_rows($q_res)) {
         $str = "<span class=\"tableContainer\">"
                 . "<table>"

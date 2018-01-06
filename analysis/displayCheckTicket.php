@@ -12,8 +12,8 @@ function displayCheckTicket($drawDate, $drawID, $drawNums, $iterationDepth) {
             . "`ball_6` "
             . "FROM `full` "
             . "WHERE `id` = (SELECT MAX(`id`) FROM `full`)";
-    $q_res = mysqli_query($query)
-            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+    $q_res = mysqli_query($dbCon, $query);
+            //or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
     $row = mysqli_fetch_row($q_res);
     if(empty($drawID)) {
         $drawID = $row[0];

@@ -62,8 +62,8 @@ function processRelativeFrequency($opt, $draws, $drawmachine, $setofballs) {
             . "GROUP BY hot "
             . "ORDER BY hits DESC;";
     
-    $q_res = mysqli_query($query)
-            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+    $q_res = mysqli_query($dbCon, $query);
+            //or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
     if(mysqli_num_rows($q_res)) {
         $coords = array();
         $str .= "<span class=\"tableContainer\">"

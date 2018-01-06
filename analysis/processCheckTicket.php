@@ -36,8 +36,8 @@ function processCheckTicket($drawDate, $drawID, $drawNums, $iterationDepth) {
                             : " WHERE `date` LIKE '" . $drawDate . "'")
                     : " WHERE `id` = " . $drawID);
     }
-    $q_res = mysqli_query($query)
-            or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+    $q_res = mysqli_query($dbCon, $query);
+            //or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
     $str = "";
     if(mysqli_num_rows($q_res)) {
         while($row = mysqli_fetch_array($q_res, MYSQLI_ASSOC)){
@@ -59,8 +59,8 @@ function processCheckTicket($drawDate, $drawID, $drawNums, $iterationDepth) {
                 $query1 = "SELECT `award_" . $hitsNumber . "` "
                         . "FROM `full` WHERE `id`="
                         . $drawID;
-                $q_res1 = mysqli_query($query1)
-                        or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
+                $q_res1 = mysqli_query($dbCon, $query1);
+                        //or die("Could not perform ".$query."<br />".mysqli_error()."<br />");
                 $row1 = mysqli_fetch_row($q_res1);
                 $award = $row1[0];
                 $str .= "<p>You've guessed <b>"

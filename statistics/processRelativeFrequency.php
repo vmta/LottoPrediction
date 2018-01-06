@@ -1,5 +1,10 @@
 <?php
 function processRelativeFrequency($opt, $draws, $drawmachine, $setofballs) {
+
+    require "db/config.php";
+    $dbCon = mysqli_connect("p:".$myHost, $myUser, $myPass, $myDB);
+    mysqli_set_charset($dbCon, 'utf8');
+    
     $str = "";
     switch($opt) {
         case "3x":
